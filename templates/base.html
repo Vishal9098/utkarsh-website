@@ -156,7 +156,7 @@ footer a:hover { color:#fff; }
           <ul class="dropdown-menu dropdown-menu-end">
             <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="fas fa-user-circle me-2"></i>Profile</a></li>
             <li><a class="dropdown-item" href="{% url 'my_orders' %}"><i class="fas fa-box me-2"></i>My Orders</a></li>
-            {% if user.is_staff %}<li><a class="dropdown-item" href="{% url 'dashboard_home' %}"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</a></li>{% endif %}
+            <!-- {% if user.is_staff %}<li><a class="dropdown-item" href="{% url 'dashboard_home' %}"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</a></li>{% endif %} -->
             <li><hr class="dropdown-divider"></li>
             <li><a class="dropdown-item" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
           </ul>
