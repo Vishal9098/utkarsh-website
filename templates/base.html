@@ -19,7 +19,6 @@
   --border: #e0e6ef;
 }
 * { margin:0; padding:0; box-sizing:border-box; }
-body
 html, body { font-family: "Libre Baskerville", serif; }
 .top-bar { background:var(--primary); color:#fff; padding:8px 0; font-size:14px; }
 .top-bar a { color:#fff; text-decoration:none; }
@@ -60,114 +59,164 @@ html, body { font-family: "Libre Baskerville", serif; }
 .stars { color:var(--secondary); }
 .breadcrumb-section { background:var(--light-bg); padding:15px 0; border-bottom:1px solid var(--border); }
 
-/* ✅ NAKODA STYLE FOOTER */
+/* ===== FOOTER ===== */
 .footer-main {
   background: #111;
   color: #ccc;
-  padding: 50px 0 0;
   font-family: 'Poppins', sans-serif;
+  margin-top: 0;
 }
 .footer-top {
   display: grid;
-  grid-template-columns: 1.5fr 1fr 1fr 1.2fr;
+  grid-template-columns: 1.6fr 1fr 1.1fr 1.1fr;
   gap: 40px;
-  padding-bottom: 40px;
-  border-bottom: 1px solid #2a2a2a;
+  padding: 50px 0 40px;
+  border-bottom: 1px solid #222;
 }
 .footer-logo-box img {
-  height: 60px;
-  margin-bottom: 12px;
+  height: 58px;
+  margin-bottom: 14px;
+  display: block;
 }
 .footer-logo-box p {
   font-size: 13px;
-  line-height: 1.7;
-  color: #aaa;
+  line-height: 1.75;
+  color: #999;
+  margin-bottom: 16px;
 }
-.footer-social { display:flex; gap:14px; margin-top:15px; }
-.footer-social a { color:#aaa; font-size:18px; transition:color .2s; }
-.footer-social a:hover { color:#fff; }
+.footer-social {
+  display: flex;
+  gap: 10px;
+}
+.footer-social a {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid #2e2e2e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #aaa;
+  font-size: 14px;
+  text-decoration: none;
+  transition: all .25s;
+}
+.footer-social a:hover {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+  transform: translateY(-2px);
+}
 .footer-col h5 {
   color: #fff;
-  font-size: 15px;
+  font-size: 12px;
   font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.8px;
   margin-bottom: 18px;
-  padding-bottom: 8px;
+  padding-bottom: 10px;
   border-bottom: 2px solid var(--primary);
   display: inline-block;
 }
-.footer-col a, .footer-col p {
-  color: #aaa;
+.footer-col a, .footer-col .finfo {
+  color: #999;
   font-size: 13px;
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: 9px;
   text-decoration: none;
-  transition: color .2s;
+  transition: all .2s;
+  line-height: 1.5;
 }
-.footer-col a:hover { color: #fff; }
-.footer-col p i { color: var(--primary); margin-right: 8px; }
+.footer-col a:hover {
+  color: #fff;
+  padding-left: 5px;
+}
+.footer-col .finfo i {
+  color: var(--primary);
+  margin-right: 8px;
+  font-size: 12px;
+  width: 14px;
+}
+.footer-app-btns {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+.footer-app-btns span {
+  background: #1a1a1a;
+  border: 1px solid #2e2e2e;
+  border-radius: 7px;
+  padding: 8px 14px;
+  font-size: 11.5px;
+  color: #888;
+  cursor: pointer;
+}
+.footer-app-btns span i { margin-right: 5px; color: #aaa; }
 
-/* OUR SERVICES bottom section */
+/* Our Services Section */
 .footer-services-section {
-  background: #0a0a0a;
-  padding: 30px 0 20px;
-  border-top: 1px solid #222;
+  background: #0c0c0c;
+  padding: 32px 0 24px;
+  border-top: 1px solid #1e1e1e;
 }
 .footer-services-section h6 {
   color: #fff;
-  font-size: 14px;
+  font-size: 11px;
   font-weight: 700;
-  text-align: center;
-  letter-spacing: 2px;
-  margin-bottom: 20px;
+  letter-spacing: 3px;
   text-transform: uppercase;
+  text-align: center;
+  margin-bottom: 22px;
+  font-family: 'Poppins', sans-serif;
 }
 .footer-services-section h6::after {
   content: '';
   display: block;
-  width: 40px;
+  width: 38px;
   height: 2px;
   background: var(--primary);
   margin: 8px auto 0;
 }
 .footer-services-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 4px 20px;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0;
 }
 .footer-services-grid a {
-  color: #999;
+  color: #888;
   font-size: 12.5px;
   text-decoration: none;
-  padding: 4px 0;
-  transition: color .2s;
+  padding: 6px 12px;
+  transition: all .2s;
   font-family: 'Poppins', sans-serif;
+  border-left: 1px solid #1e1e1e;
+  border-top: 1px solid #1a1a1a;
 }
-.footer-services-grid a:hover { color: #fff; }
+.footer-services-grid a:hover {
+  color: #fff;
+  background: rgba(26,95,168,.12);
+  border-left-color: var(--primary);
+}
 
+/* Bottom Bar */
 .footer-bottom-bar {
-  background: #000;
-  text-align: center;
+  background: #060606;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
   padding: 14px 0;
-  color: #666;
+  color: #555;
   font-size: 12px;
   font-family: 'Poppins', sans-serif;
+  border-top: 1px solid #1a1a1a;
 }
-.footer-bottom-bar a { color: #fff; text-decoration: none; }
+.footer-bottom-bar a { color: #888; text-decoration: none; }
+.footer-bottom-bar a:hover { color: #fff; }
+.footer-bottom-bar .fbar-right { display: flex; gap: 18px; }
 
-@media(max-width:768px) {
-  .footer-top { grid-template-columns: 1fr 1fr; gap: 25px; }
-  .footer-services-grid { grid-template-columns: repeat(2, 1fr); }
-  .hero-section { padding:50px 0; }
-  .hero-section h1 { font-size:28px !important; }
-  .section-title h2 { font-size:24px; }
-  .floating-buttons { bottom:80px; }
-  body { padding-bottom: 65px; }
-}
-@media(max-width:480px) {
-  .footer-top { grid-template-columns: 1fr; }
-}
-
-/* MOBILE BOTTOM NAV */
+/* Mobile Bottom Nav */
 .mobile-bottom-nav {
   display: none;
   position: fixed;
@@ -192,10 +241,10 @@ html, body { font-family: "Libre Baskerville", serif; }
   padding: 8px 0;
   transition: color 0.2s;
   position: relative;
+  font-family: 'Poppins', sans-serif;
 }
 .mobile-bottom-nav a i { font-size: 20px; }
-.mobile-bottom-nav a.active,
-.mobile-bottom-nav a:hover { color: var(--primary); }
+.mobile-bottom-nav a.active, .mobile-bottom-nav a:hover { color: var(--primary); }
 .mobile-bottom-nav a .mob-badge {
   position: absolute;
   top: 6px;
@@ -212,7 +261,25 @@ html, body { font-family: "Libre Baskerville", serif; }
   padding: 0 3px;
   font-weight: 700;
 }
-@media (max-width: 768px) {
+
+@media(max-width: 992px) {
+  .floating-buttons { bottom: 80px; }
+  body { padding-bottom: 65px; }
+}
+@media(max-width: 768px) {
+  .footer-top { grid-template-columns: 1fr 1fr; gap: 28px; }
+  .footer-services-grid { grid-template-columns: repeat(2, 1fr); }
+  .hero-section { padding: 50px 0; }
+  .hero-section h1 { font-size: 28px !important; }
+  .section-title h2 { font-size: 24px; }
+  .footer-bottom-bar { flex-direction: column; text-align: center; padding: 12px 0; }
+  .footer-bottom-bar .fbar-right { justify-content: center; }
+}
+@media(max-width: 480px) {
+  .footer-top { grid-template-columns: 1fr; }
+  .footer-services-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media(max-width: 992px) {
   .mobile-bottom-nav { display: flex; }
 }
 
@@ -235,7 +302,7 @@ html, body { font-family: "Libre Baskerville", serif; }
 <!-- TOP BAR -->
 <div class="top-bar d-none d-md-block">
   <div class="container d-flex justify-content-between align-items-center">
-    <div><i class="fas fa-phone me-2"></i><a href="tel:+917806061048">+91-7806061048</a> &nbsp;|&nbsp; <i class="fas fa-envelope me-2"></i><a href="mailto:support@utkarshcleaninghomeservices@gmail.com">support@utkarshcleaninghomeservices@gmail.com</a></div>
+    <div><i class="fas fa-phone me-2"></i><a href="tel:+917806061048">+91-7806061048</a> &nbsp;|&nbsp; <i class="fas fa-envelope me-2"></i><a href="mailto:support@utkarshcleaninghomeservices.com">support@utkarshcleaninghomeservices.com</a></div>
     <div><i class="fas fa-map-marker-alt me-1"></i>Bhopal, Madhya Pradesh</div>
   </div>
 </div>
@@ -244,7 +311,6 @@ html, body { font-family: "Libre Baskerville", serif; }
 <nav class="navbar navbar-expand-lg">
   <div class="container">
     <a class="navbar-brand" href="{% url 'home' %}">
-      <!-- ✅ Logo image -->
       <img src="{% static 'images/logo.png' %}" alt="Utkarsh Cleaning" style="height:55px;">
     </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -300,7 +366,7 @@ html, body { font-family: "Libre Baskerville", serif; }
 
 {% block content %}{% endblock %}
 
-<!-- ✅ NAKODA STYLE FOOTER -->
+<!-- ===== FOOTER ===== -->
 <footer class="footer-main">
   <div class="container">
     <div class="footer-top">
@@ -308,86 +374,98 @@ html, body { font-family: "Libre Baskerville", serif; }
       <!-- Company Info -->
       <div class="footer-logo-box">
         <img src="{% static 'images/logo.png' %}" alt="Utkarsh Cleaning">
-        <p>Utkarsh Home Services is a leading Home and Office Services Platform in India, providing reliable and professional cleaning solutions.</p>
+        <p>Utkarsh Home Services is a leading Home & Office Services Platform in India, providing reliable and professional cleaning solutions across Madhya Pradesh.</p>
         <div class="footer-social">
-          <a href="#"><i class="fab fa-facebook"></i></a>
-          <a href="#"><i class="fab fa-instagram"></i></a>
-          <a href="#"><i class="fab fa-whatsapp"></i></a>
-          <a href="#"><i class="fab fa-youtube"></i></a>
-          <a href="#"><i class="fab fa-linkedin"></i></a>
+          <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="https://wa.me/917806061048" title="WhatsApp" target="_blank"><i class="fab fa-whatsapp"></i></a>
+          <a href="#" title="YouTube"><i class="fab fa-youtube"></i></a>
+          <a href="#" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
         </div>
       </div>
 
       <!-- Quick Links -->
       <div class="footer-col">
         <h5>Quick Links</h5>
-        <a href="{% url 'home' %}">Home</a>
-        <a href="{% url 'all_services' %}">All Services</a>
-        <a href="{% url 'gallery' %}">Gallery</a>
-        <a href="{% url 'blog_list' %}">Blog</a>
-        <a href="{% url 'contact' %}">Contact Us</a>
-        <a href="#">About Us</a>
-        <a href="#">FAQ</a>
-        <a href="#">Privacy Policy</a>
-        <a href="#">Terms & Conditions</a>
+        <a href="{% url 'home' %}"><i class="fas fa-chevron-right me-1" style="font-size:10px;color:var(--primary);"></i>Home</a>
+        <a href="{% url 'all_services' %}"><i class="fas fa-chevron-right me-1" style="font-size:10px;color:var(--primary);"></i>All Services</a>
+        <a href="{% url 'gallery' %}"><i class="fas fa-chevron-right me-1" style="font-size:10px;color:var(--primary);"></i>Gallery</a>
+        <a href="{% url 'blog_list' %}"><i class="fas fa-chevron-right me-1" style="font-size:10px;color:var(--primary);"></i>Blog</a>
+        <a href="{% url 'contact' %}"><i class="fas fa-chevron-right me-1" style="font-size:10px;color:var(--primary);"></i>Contact Us</a>
+        <a href="#"><i class="fas fa-chevron-right me-1" style="font-size:10px;color:var(--primary);"></i>About Us</a>
+        <a href="#"><i class="fas fa-chevron-right me-1" style="font-size:10px;color:var(--primary);"></i>FAQ</a>
+        <a href="#"><i class="fas fa-chevron-right me-1" style="font-size:10px;color:var(--primary);"></i>Privacy Policy</a>
+        <a href="#"><i class="fas fa-chevron-right me-1" style="font-size:10px;color:var(--primary);"></i>Terms & Conditions</a>
       </div>
 
       <!-- Contact Info -->
       <div class="footer-col">
         <h5>Contact Info</h5>
-        <p><i class="fas fa-map-marker-alt"></i>Bhopal, Madhya Pradesh</p>
-        <p><i class="fas fa-phone"></i>+91-7806061048</p>
-        <p><i class="fas fa-envelope"></i>support@utkarshcleaninghomeservices@gmail.com</p>
-        <p><i class="fas fa-envelope"></i>consumer.complaints@utkarshcleaning.com</p>
-        <p><i class="fas fa-clock"></i>We reply within 1 working day</p>
+        <p class="finfo"><i class="fas fa-map-marker-alt"></i>Bhopal, Madhya Pradesh, India</p>
+        <p class="finfo"><i class="fas fa-phone-alt"></i>+91-7806061048</p>
+        <p class="finfo"><i class="fas fa-envelope"></i>support@utkarshcleaninghomeservices.com</p>
+        <p class="finfo"><i class="fas fa-envelope"></i>consumer.complaints@utkarshcleaning.com</p>
+        <p class="finfo"><i class="fas fa-reply"></i>Reply within 1 working day</p>
+        <p class="finfo" style="margin-top:8px;"><i class="fas fa-shield-alt"></i>100% Safe & Verified Staff</p>
       </div>
 
-      <!-- Working Hours -->
+      <!-- Working Hours + App -->
       <div class="footer-col">
         <h5>Working Hours</h5>
-        <p><i class="fas fa-clock"></i>Timing 8:00 AM - 8:00 PM</p>
-        <p><i class="fas fa-calendar"></i>Monday To Sunday</p>
+        <p class="finfo"><i class="fas fa-clock"></i>8:00 AM – 8:00 PM</p>
+        <p class="finfo"><i class="fas fa-calendar-check"></i>Monday to Sunday</p>
+        <p class="finfo" style="margin-top:4px;"><i class="fas fa-headset"></i>24/7 Customer Support</p>
         <br>
         <h5>Download App</h5>
-        <p style="color:#aaa;font-size:13px;">Coming Soon on Android & iOS</p>
+        <p class="finfo" style="margin-bottom:10px;"><i class="fas fa-mobile-alt"></i>Coming Soon on Android & iOS</p>
+        <div class="footer-app-btns">
+          <span><i class="fab fa-google-play"></i>Android</span>
+          <span><i class="fab fa-apple"></i>iOS</span>
+        </div>
       </div>
 
     </div>
   </div>
 
-  <!-- OUR SERVICES Section -->
+  <!-- Our Services Grid -->
   <div class="footer-services-section">
     <div class="container">
       <h6>Our Services</h6>
       <div class="footer-services-grid">
-        <a href="{% url 'all_services' %}?category=villa-cleaning">Villa Cleaning</a>
-        <a href="{% url 'all_services' %}?category=furnished-apartment-cleaning">Furnished Apartment Cleaning</a>
-        <a href="{% url 'all_services' %}?category=unfurnished-apartment-cleaning">Unfurnished Apartment Cleaning</a>
-        <a href="{% url 'all_services' %}?category=office-cleaning">Office Deep Cleaning</a>
-        <a href="{% url 'all_services' %}?category=bathroom-deep-cleaning">Bathroom Deep Cleaning</a>
-        <a href="{% url 'all_services' %}?category=kitchen-cleaning">Kitchen Deep Cleaning</a>
-        <a href="{% url 'all_services' %}?category=sofa-cleaning">Sofa Deep Cleaning</a>
-        <a href="{% url 'all_services' %}?category=mattress-cleaning">Mattress Cleaning</a>
-        <a href="#">Carpet Cleaning</a>
-        <a href="#">Water Tank Cleaning</a>
-        <a href="#">AC Service & Repair</a>
-        <a href="#">Chimney Cleaning</a>
-        <a href="#">Refrigerator Cleaning</a>
-        <a href="#">Glass Cleaning</a>
-        <a href="#">Pest Control</a>
-        <a href="#">Chair Cleaning</a>
-        <a href="#">Commercial Space Cleaning</a>
-        <a href="#">Full Home Cleaning</a>
-        <a href="#">Sanitization Service</a>
-        <a href="#">Annual Contract Plans</a>
+        <a href="{% url 'all_services' %}?category=villa-cleaning"><i class="fas fa-home me-1" style="font-size:10px;"></i>Villa Cleaning</a>
+        <a href="{% url 'all_services' %}?category=furnished-apartment-cleaning"><i class="fas fa-couch me-1" style="font-size:10px;"></i>Furnished Apartment</a>
+        <a href="{% url 'all_services' %}?category=unfurnished-apartment-cleaning"><i class="fas fa-building me-1" style="font-size:10px;"></i>Unfurnished Apartment</a>
+        <a href="{% url 'all_services' %}?category=office-cleaning"><i class="fas fa-briefcase me-1" style="font-size:10px;"></i>Office Deep Cleaning</a>
+        <a href="{% url 'all_services' %}?category=bathroom-deep-cleaning"><i class="fas fa-bath me-1" style="font-size:10px;"></i>Bathroom Cleaning</a>
+        <a href="{% url 'all_services' %}?category=kitchen-cleaning"><i class="fas fa-utensils me-1" style="font-size:10px;"></i>Kitchen Cleaning</a>
+        <a href="{% url 'all_services' %}?category=sofa-cleaning"><i class="fas fa-couch me-1" style="font-size:10px;"></i>Sofa Deep Cleaning</a>
+        <a href="{% url 'all_services' %}?category=mattress-cleaning"><i class="fas fa-bed me-1" style="font-size:10px;"></i>Mattress Cleaning</a>
+        <a href="#"><i class="fas fa-scroll me-1" style="font-size:10px;"></i>Carpet Cleaning</a>
+        <a href="#"><i class="fas fa-tint me-1" style="font-size:10px;"></i>Water Tank Cleaning</a>
+        <a href="#"><i class="fas fa-snowflake me-1" style="font-size:10px;"></i>AC Service & Repair</a>
+        <a href="#"><i class="fas fa-fire me-1" style="font-size:10px;"></i>Chimney Cleaning</a>
+        <a href="#"><i class="fas fa-temperature-low me-1" style="font-size:10px;"></i>Refrigerator Cleaning</a>
+        <a href="#"><i class="fas fa-window-maximize me-1" style="font-size:10px;"></i>Glass Cleaning</a>
+        <a href="#"><i class="fas fa-bug me-1" style="font-size:10px;"></i>Pest Control</a>
+        <a href="#"><i class="fas fa-chair me-1" style="font-size:10px;"></i>Chair Cleaning</a>
+        <a href="#"><i class="fas fa-city me-1" style="font-size:10px;"></i>Commercial Cleaning</a>
+        <a href="#"><i class="fas fa-house-user me-1" style="font-size:10px;"></i>Full Home Cleaning</a>
+        <a href="#"><i class="fas fa-pump-medical me-1" style="font-size:10px;"></i>Sanitization Service</a>
+        <a href="#"><i class="fas fa-file-contract me-1" style="font-size:10px;"></i>Annual Contract Plans</a>
       </div>
     </div>
   </div>
 
   <!-- Bottom Bar -->
   <div class="footer-bottom-bar">
-    Copyright &copy; 2026 All Rights Reserved By <a href="#">Utkarsh Cleaning Home Services</a> &nbsp;|&nbsp;
-    Developed with <a href="https://www.webcraftagency.com/" target="_blank">Web Craft Agency</a>
+    <div class="container d-flex justify-content-between align-items-center flex-wrap gap-2">
+      <span>Copyright &copy; 2026 All Rights Reserved By <a href="#">Utkarsh Cleaning Home Services</a> &nbsp;|&nbsp; Developed by <a href="https://www.webcraftagency.com/" target="_blank">Web Craft Agency</a></span>
+      <div class="fbar-right">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms & Conditions</a>
+        <a href="#">Sitemap</a>
+      </div>
+    </div>
   </div>
 </footer>
 
