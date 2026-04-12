@@ -61,6 +61,27 @@
               <button type="button" id="qty-plus" class="btn btn-light border-0 px-3 py-2" style="font-size:18px;font-weight:700;">+</button>
             </div>
           </div>
+
+          <!-- ✅ Live Total Amount Box -->
+          <div class="mb-3 p-3 rounded-3" style="background:#f0f7ff;border:1.5px solid #c7d7f5;">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <span class="text-muted" style="font-size:14px;">Unit Price</span>
+              <span style="font-size:14px;">₹{{ service.get_final_price }}</span>
+            </div>
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <span class="text-muted" style="font-size:14px;">Quantity</span>
+              <span id="summary-qty" style="font-size:14px;">1</span>
+            </div>
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <span class="text-muted" style="font-size:14px;">GST (18%)</span>
+              <span id="summary-gst" style="font-size:14px; color:#6c757d;">₹0.00</span>
+            </div>
+            <hr class="my-2">
+            <div class="d-flex justify-content-between align-items-center">
+              <span class="fw-bold" style="font-size:16px;">Total Amount</span>
+              <span id="summary-total" class="fw-bold" style="font-size:20px;color:var(--primary);">₹0.00</span>
+            </div>
+          </div>
           {% endif %}
 
           <div class="d-flex gap-3">
@@ -76,24 +97,48 @@
               <i class="fas fa-cart-plus me-2"></i>Add to Cart
             </a>
             {% endif %}
-            <a href="{% url 'checkout' %}" class="btn btn-warning btn-lg px-4" style="border-radius:30px;color:#000;font-weight:700;">Book Now</a>
+
+            <a href="{% url 'book_now' service.id %}" class="btn btn-warning btn-lg px-4" style="border-radius:30px;color:#000;font-weight:700;">
+              <i class="fas fa-bolt me-2"></i>Book Now
+            </a>
           </div>
         </div>
 
         {% if slug == 'bathroom-deep-cleaning' or slug == 'sofa-cleaning' or slug == 'mattress-cleaning' %}
         <script>
-          const minusBtn = document.getElementById('qty-minus');
-          const plusBtn  = document.getElementById('qty-plus');
-          const qtyInput = document.getElementById('qty-input');
-          const cartQty  = document.getElementById('cart-qty');
+          const unitPrice = {{ service.get_final_price }};
+          const GST_RATE  = 0.18;
+
+          const minusBtn   = document.getElementById('qty-minus');
+          const plusBtn    = document.getElementById('qty-plus');
+          const qtyInput   = document.getElementById('qty-input');
+          const cartQty    = document.getElementById('cart-qty');
+          const summaryQty = document.getElementById('summary-qty');
+          const summaryGst = document.getElementById('summary-gst');
+          const summaryTot = document.getElementById('summary-total');
+
+          function updateSummary() {
+            const qty      = parseInt(qtyInput.value);
+            const subtotal = unitPrice * qty;
+            const gst      = subtotal * GST_RATE;
+            const total    = subtotal + gst;
+
+            summaryQty.textContent = qty;
+            summaryGst.textContent = '₹' + gst.toFixed(2);
+            summaryTot.textContent = '₹' + total.toFixed(2);
+            cartQty.value = qty;
+          }
+
+          // Page load pe ek baar chalao
+          updateSummary();
 
           minusBtn.addEventListener('click', () => {
             let val = parseInt(qtyInput.value);
-            if (val > 1) { qtyInput.value = val - 1; cartQty.value = val - 1; }
+            if (val > 1) { qtyInput.value = val - 1; updateSummary(); }
           });
           plusBtn.addEventListener('click', () => {
             let val = parseInt(qtyInput.value);
-            if (val < 10) { qtyInput.value = val + 1; cartQty.value = val + 1; }
+            if (val < 10) { qtyInput.value = val + 1; updateSummary(); }
           });
         </script>
         {% endif %}

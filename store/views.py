@@ -303,6 +303,24 @@ def checkout(request):
         'gst_amount': gst_amount, 'total': total, 'profile': profile  # ✅ gst_amount bhi pass kiya
     })
 
+
+
+
+
+@login_required
+def book_now(request, service_id):
+    service = get_object_or_404(Service, id=service_id)
+    # Pehle cart clear karo aur sirf yahi service daalo
+    cart, _ = Cart.objects.get_or_create(user=request.user)
+    cart.items.all().delete()  # purani items hataao
+    CartItem.objects.create(cart=cart, service=service, quantity=1)
+    return redirect('checkout')
+
+
+
+
+
+
 @login_required
 def order_success(request, order_id):
     order = get_object_or_404(Order, order_id=order_id, user=request.user)

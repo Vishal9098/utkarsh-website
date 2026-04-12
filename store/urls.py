@@ -11,6 +11,7 @@ urlpatterns = [
     path('cart/update/<int:item_id>/', views.update_cart, name='update_cart'),
     path('cart/coupon/', views.apply_coupon, name='apply_coupon'),
     path('checkout/', views.checkout, name='checkout'),
+    path('service/book/<int:service_id>/', views.book_now, name='book_now'),  # ✅ NEW
     path('order/success/<str:order_id>/', views.order_success, name='order_success'),
     path('orders/', views.my_orders, name='my_orders'),
     path('order/<str:order_id>/', views.order_detail, name='order_detail'),
@@ -21,5 +22,4 @@ urlpatterns = [
     path('review/add/<int:service_id>/', views.add_review, name='add_review'),
     path('search/', views.search, name='search'),
     path('order/<str:order_id>/invoice/', views.download_invoice, name='download_invoice'),
-    path('order/<str:order_id>/invoice/', views.download_invoice, name='download_invoice')
 ]

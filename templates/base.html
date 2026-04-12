@@ -84,7 +84,69 @@ footer a:hover { color:#fff; }
   .hero-section { padding:50px 0; }
   .hero-section h1 { font-size:28px !important; }
   .section-title h2 { font-size:24px; }
+  /* Mobile pe floating buttons upar karo taaki bottom nav se overlap na ho */
+  .floating-buttons { bottom:80px; }
+  /* Mobile pe body ka bottom padding */
+  body { padding-bottom: 65px; }
 }
+
+/* ✅ MOBILE BOTTOM NAVIGATION */
+.mobile-bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1050;
+  background: #fff;
+  border-top: 1px solid #e0e6ef;
+  box-shadow: 0 -4px 15px rgba(0,0,0,0.10);
+  height: 62px;
+}
+.mobile-bottom-nav a {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #888;
+  text-decoration: none;
+  font-size: 10px;
+  font-weight: 600;
+  gap: 3px;
+  padding: 8px 0;
+  transition: color 0.2s;
+  position: relative;
+}
+.mobile-bottom-nav a i {
+  font-size: 20px;
+}
+.mobile-bottom-nav a.active,
+.mobile-bottom-nav a:hover {
+  color: var(--primary);
+}
+.mobile-bottom-nav a .mob-badge {
+  position: absolute;
+  top: 6px;
+  left: calc(50% + 4px);
+  background: #e74c3c;
+  color: #fff;
+  font-size: 9px;
+  min-width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 3px;
+  font-weight: 700;
+}
+@media (max-width: 768px) {
+  .mobile-bottom-nav {
+    display: flex;
+  }
+}
+
 {% block extra_css %}{% endblock %}
 </style>
 </head>
@@ -156,7 +218,6 @@ footer a:hover { color:#fff; }
           <ul class="dropdown-menu dropdown-menu-end">
             <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="fas fa-user-circle me-2"></i>Profile</a></li>
             <li><a class="dropdown-item" href="{% url 'my_orders' %}"><i class="fas fa-box me-2"></i>My Orders</a></li>
-            <!-- {% if user.is_staff %}<li><a class="dropdown-item" href="{% url 'dashboard_home' %}"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</a></li>{% endif %} -->
             <li><hr class="dropdown-divider"></li>
             <li><a class="dropdown-item" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
           </ul>
@@ -172,7 +233,6 @@ footer a:hover { color:#fff; }
 
 {% block content %}{% endblock %}
 
-<!-- FOOTER -->
 <!-- FOOTER -->
 <footer style="background:#000;">
   <div class="container">
@@ -225,50 +285,37 @@ footer a:hover { color:#fff; }
         <p style="font-size:13px;"><i class="fas fa-clock me-2" style="color:var(--primary);"></i>We reply within 1 working day</p>
       </div>
     </div>
-    <!-- <div class="footer-bottom">
-      <p>Copyright &copy; 2026 All Rights Reserved By <strong style="color:#fff;">Utkarsh Cleaning Home Services</strong> | Developed with  <a href="https://www.webcraftagency.com/" target="_blank" style="color:#fff; text-decoration: none;">Web Craft Agency </a></p>
-    </div> -->
 
+    <div class="footer-bottom">
+      <p>
+        Copyright &copy; 2026 All Rights Reserved By
+        <strong>Utkarsh Cleaning Home Services</strong> |
+        Developed with
+        <a href="https://www.webcraftagency.com/" target="_blank">Web Craft Agency</a>
+      </p>
+    </div>
 
-
-<div class="footer-bottom">
-  <p>
-    Copyright &copy; 2026 All Rights Reserved By 
-    <strong>Utkarsh Cleaning Home Services</strong> | 
-    Developed with 
-    <a href="https://www.webcraftagency.com/" target="_blank">
-      Web Craft Agency
-    </a>
-  </p>
-</div>
-
-<style>
-.footer-bottom p {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 5px;
-  margin: 0;
-  text-align: center;
-  flex-wrap: wrap; /* mobile ke liye */
-}
-
-.footer-bottom a {
-  color: #fff;
-  text-decoration: none;
-}
-
-/* Desktop pe single line */
-@media (min-width: 768px) {
-  .footer-bottom p {
-    flex-wrap: nowrap;
-    white-space: nowrap;
-  }
-}
-</style>
-
-
-   
+    <style>
+    .footer-bottom p {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 5px;
+      margin: 0;
+      text-align: center;
+      flex-wrap: wrap;
+    }
+    .footer-bottom a {
+      color: #fff;
+      text-decoration: none;
+    }
+    @media (min-width: 768px) {
+      .footer-bottom p {
+        flex-wrap: nowrap;
+        white-space: nowrap;
+      }
+    }
+    </style>
   </div>
 </footer>
 
@@ -277,6 +324,38 @@ footer a:hover { color:#fff; }
   <a href="https://wa.me/917806061048" class="float-btn float-wa" target="_blank" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
   <a href="tel:+917806061048" class="float-btn float-call" title="Call Us"><i class="fas fa-phone"></i></a>
 </div>
+
+<!-- ✅ MOBILE BOTTOM NAVIGATION -->
+<nav class="mobile-bottom-nav">
+  <a href="{% url 'home' %}" class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+    <i class="fas fa-home"></i>
+    <span>Home</span>
+  </a>
+  <a href="{% url 'all_services' %}" class="{% if request.resolver_match.url_name == 'all_services' %}active{% endif %}">
+    <i class="fas fa-spray-can-sparkles"></i>
+    <span>Services</span>
+  </a>
+  <a href="{% url 'search' %}" class="{% if request.resolver_match.url_name == 'search' %}active{% endif %}">
+    <i class="fas fa-search"></i>
+    <span>Search</span>
+  </a>
+  <a href="{% url 'cart' %}" class="{% if request.resolver_match.url_name == 'cart' %}active{% endif %}">
+    <i class="fas fa-shopping-cart"></i>
+    {% if cart_count > 0 %}<span class="mob-badge">{{ cart_count }}</span>{% endif %}
+    <span>Cart</span>
+  </a>
+  {% if user.is_authenticated %}
+  <a href="{% url 'profile' %}" class="{% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
+    <i class="fas fa-user"></i>
+    <span>Account</span>
+  </a>
+  {% else %}
+  <a href="{% url 'login' %}">
+    <i class="fas fa-user"></i>
+    <span>Login</span>
+  </a>
+  {% endif %}
+</nav>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
