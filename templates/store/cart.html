@@ -46,12 +46,28 @@
         </div>
         <div class="card border-0 shadow-sm p-3">
           <h6 class="fw-bold mb-3">Order Summary</h6>
-          <div class="d-flex justify-content-between mb-2"><span>Subtotal</span><strong>₹{{ subtotal }}</strong></div>
-          {% if discount > 0 %}<div class="d-flex justify-content-between mb-2 text-success"><span>Discount</span><strong>-₹{{ discount }}</strong></div>{% endif %}
+          <div class="d-flex justify-content-between mb-2">
+            <span>Subtotal</span><strong>₹{{ subtotal }}</strong>
+          </div>
+          {% if discount > 0 %}
+          <div class="d-flex justify-content-between mb-2 text-success">
+            <span>Discount</span><strong>-₹{{ discount }}</strong>
+          </div>
+          {% endif %}
+          <div class="d-flex justify-content-between mb-2 text-muted">
+            <span>GST (18%)</span><strong>+₹{{ gst_amount }}</strong>
+          </div>
           <hr>
-          <div class="d-flex justify-content-between mb-3"><span class="fw-bold fs-5">Total</span><strong class="fs-5" style="color:var(--primary);">₹{{ total }}</strong></div>
-          <a href="{% url 'checkout' %}" class="btn btn-primary w-100 btn-lg" style="border-radius:30px;"><i class="fas fa-credit-card me-2"></i>Proceed to Checkout</a>
-          <a href="{% url 'all_services' %}" class="btn btn-outline-secondary w-100 mt-2" style="border-radius:30px;">Continue Shopping</a>
+          <div class="d-flex justify-content-between mb-3">
+            <span class="fw-bold fs-5">Total</span>
+            <strong class="fs-5" style="color:var(--primary);">₹{{ total }}</strong>
+          </div>
+          <a href="{% url 'checkout' %}" class="btn btn-primary w-100 btn-lg" style="border-radius:30px;">
+            <i class="fas fa-credit-card me-2"></i>Proceed to Checkout
+          </a>
+          <a href="{% url 'all_services' %}" class="btn btn-outline-secondary w-100 mt-2" style="border-radius:30px;">
+            Continue Shopping
+          </a>
         </div>
       </div>
     </div>

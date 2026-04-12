@@ -44,12 +44,61 @@
           <span class="badge bg-warning text-dark ms-2 fs-6">{{ service.get_discount_percent }}% OFF</span>
           {% endif %}
         </div>
-        {% if service.duration %}<p class="text-muted"><i class="fas fa-clock me-2" style="color:var(--primary);"></i>Duration: {{ service.duration }}</p>{% endif %}
+        {% if service.duration %}
+        <p class="text-muted"><i class="fas fa-clock me-2" style="color:var(--primary);"></i>Duration: {{ service.duration }}</p>
+        {% endif %}
         <p>{{ service.short_description }}</p>
-        <div class="d-flex gap-3 my-4">
-          <a href="{% url 'add_to_cart' service.id %}" class="btn btn-primary btn-lg px-4" style="border-radius:30px;"><i class="fas fa-cart-plus me-2"></i>Add to Cart</a>
-          <a href="{% url 'checkout' %}" class="btn btn-warning btn-lg px-4" style="border-radius:30px;color:#000;font-weight:700;">Book Now</a>
+
+        {% with slug=service.category.slug %}
+        <div class="my-4">
+          {% if slug == 'bathroom-deep-cleaning' or slug == 'sofa-cleaning' or slug == 'mattress-cleaning' %}
+          <div class="d-flex align-items-center gap-2 mb-3">
+            <span class="fw-bold" style="color:var(--primary);">Quantity:</span>
+            <div class="d-flex align-items-center border rounded-pill overflow-hidden" style="width:130px;">
+              <button type="button" id="qty-minus" class="btn btn-light border-0 px-3 py-2" style="font-size:18px;font-weight:700;">−</button>
+              <input type="number" id="qty-input" value="1" min="1" max="10" readonly
+                class="form-control border-0 text-center fw-bold p-0" style="width:40px;font-size:16px;box-shadow:none;">
+              <button type="button" id="qty-plus" class="btn btn-light border-0 px-3 py-2" style="font-size:18px;font-weight:700;">+</button>
+            </div>
+          </div>
+          {% endif %}
+
+          <div class="d-flex gap-3">
+            {% if slug == 'bathroom-deep-cleaning' or slug == 'sofa-cleaning' or slug == 'mattress-cleaning' %}
+            <form method="GET" action="{% url 'add_to_cart' service.id %}" id="cart-form">
+              <input type="hidden" name="quantity" id="cart-qty" value="1">
+              <button type="submit" class="btn btn-primary btn-lg px-4" style="border-radius:30px;">
+                <i class="fas fa-cart-plus me-2"></i>Add to Cart
+              </button>
+            </form>
+            {% else %}
+            <a href="{% url 'add_to_cart' service.id %}" class="btn btn-primary btn-lg px-4" style="border-radius:30px;">
+              <i class="fas fa-cart-plus me-2"></i>Add to Cart
+            </a>
+            {% endif %}
+            <a href="{% url 'checkout' %}" class="btn btn-warning btn-lg px-4" style="border-radius:30px;color:#000;font-weight:700;">Book Now</a>
+          </div>
         </div>
+
+        {% if slug == 'bathroom-deep-cleaning' or slug == 'sofa-cleaning' or slug == 'mattress-cleaning' %}
+        <script>
+          const minusBtn = document.getElementById('qty-minus');
+          const plusBtn  = document.getElementById('qty-plus');
+          const qtyInput = document.getElementById('qty-input');
+          const cartQty  = document.getElementById('cart-qty');
+
+          minusBtn.addEventListener('click', () => {
+            let val = parseInt(qtyInput.value);
+            if (val > 1) { qtyInput.value = val - 1; cartQty.value = val - 1; }
+          });
+          plusBtn.addEventListener('click', () => {
+            let val = parseInt(qtyInput.value);
+            if (val < 10) { qtyInput.value = val + 1; cartQty.value = val + 1; }
+          });
+        </script>
+        {% endif %}
+        {% endwith %}
+
         <div class="row g-3 mt-2">
           <div class="col-6"><div class="d-flex align-items-center gap-2"><i class="fas fa-shield-check text-success"></i><small>100% Guaranteed</small></div></div>
           <div class="col-6"><div class="d-flex align-items-center gap-2"><i class="fas fa-leaf text-success"></i><small>Eco-friendly Products</small></div></div>
@@ -58,6 +107,7 @@
         </div>
       </div>
     </div>
+
     <!-- DESCRIPTION TABS -->
     <div class="mt-5">
       <ul class="nav nav-tabs" id="myTab">
@@ -100,6 +150,7 @@
         </div>
       </div>
     </div>
+
     <!-- RELATED SERVICES -->
     {% if related %}
     <div class="mt-5">

@@ -56,6 +56,20 @@ def service_detail(request, slug):
         'reviews': reviews, 'avg_rating': round(avg_rating, 1)
     })
 
+# def add_to_cart(request, service_id):
+#     if not request.session.session_key:
+#         request.session.create()
+#     service = get_object_or_404(Service, id=service_id)
+#     if request.user.is_authenticated:
+#         cart, _ = Cart.objects.get_or_create(user=request.user)
+#     else:
+#         cart, _ = Cart.objects.get_or_create(session_key=request.session.session_key)
+#     item, created = CartItem.objects.get_or_create(cart=cart, service=service)
+#     if not created:
+#         item.quantity += 1
+#         item.save()
+#     messages.success(request, f'"{service.name}" cart mein add ho gaya!')
+#     return redirect(request.META.get('HTTP_REFERER', '/'))
 def add_to_cart(request, service_id):
     if not request.session.session_key:
         request.session.create()
@@ -64,12 +78,39 @@ def add_to_cart(request, service_id):
         cart, _ = Cart.objects.get_or_create(user=request.user)
     else:
         cart, _ = Cart.objects.get_or_create(session_key=request.session.session_key)
+
+    # Quantity GET param se lo (bathroom category ke liye), default 1
+    try:
+        quantity = int(request.GET.get('quantity', 1))
+        if quantity < 1: quantity = 1
+        if quantity > 10: quantity = 10
+    except:
+        quantity = 1
+
     item, created = CartItem.objects.get_or_create(cart=cart, service=service)
     if not created:
-        item.quantity += 1
-        item.save()
-    messages.success(request, f'"{service.name}" cart mein add ho gaya!')
+        item.quantity += quantity
+    else:
+        item.quantity = quantity
+    item.save()
+
+    messages.success(request, f'"{service.name}" cart mein add ho gaya! (x{item.quantity})')
     return redirect(request.META.get('HTTP_REFERER', '/'))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 def remove_from_cart(request, item_id):
     item = get_object_or_404(CartItem, id=item_id)
@@ -86,6 +127,29 @@ def update_cart(request, item_id):
     else:
         item.delete()
     return redirect('cart')
+
+# def cart_view(request):
+#     if request.user.is_authenticated:
+#         cart = Cart.objects.filter(user=request.user).first()
+#     else:
+#         cart = Cart.objects.filter(session_key=request.session.session_key).first()
+#     items = cart.items.all() if cart else []
+#     subtotal = sum(i.get_total() for i in items)
+#     discount = 0
+#     coupon = request.session.get('coupon')
+#     if coupon:
+#         try:
+#             c = Coupon.objects.get(code=coupon, is_active=True)
+#             if c.discount_type == 'percent':
+#                 discount = subtotal * c.discount_value / 100
+#             else:
+#                 discount = c.discount_value
+#         except:
+#             pass
+#     total = subtotal - discount
+#     return render(request, 'store/cart.html', {
+#         'items': items, 'subtotal': subtotal, 'discount': discount, 'total': total
+#     })
 
 def cart_view(request):
     if request.user.is_authenticated:
@@ -105,10 +169,29 @@ def cart_view(request):
                 discount = c.discount_value
         except:
             pass
-    total = subtotal - discount
+    taxable_amount = subtotal - discount
+    gst_amount = round(taxable_amount * 18 / 100, 2)   # 18% GST
+    total = taxable_amount + gst_amount
     return render(request, 'store/cart.html', {
-        'items': items, 'subtotal': subtotal, 'discount': discount, 'total': total
+        'items': items, 'subtotal': subtotal, 'discount': discount,
+        'gst_amount': gst_amount, 'total': total
     })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 def apply_coupon(request):
     code = request.POST.get('coupon_code', '').strip().upper()
@@ -119,6 +202,53 @@ def apply_coupon(request):
     except:
         messages.error(request, 'Invalid ya expired coupon code.')
     return redirect('cart')
+
+# @login_required
+# def checkout(request):
+#     cart = Cart.objects.filter(user=request.user).first()
+#     items = cart.items.all() if cart else []
+#     if not items:
+#         return redirect('cart')
+#     subtotal = sum(i.get_total() for i in items)
+#     discount = 0
+#     coupon_obj = None
+#     coupon_code = request.session.get('coupon')
+#     if coupon_code:
+#         try:
+#             coupon_obj = Coupon.objects.get(code=coupon_code, is_active=True)
+#             if coupon_obj.discount_type == 'percent':
+#                 discount = subtotal * coupon_obj.discount_value / 100
+#             else:
+#                 discount = coupon_obj.discount_value
+#         except:
+#             pass
+#     total = subtotal - discount
+#     profile = getattr(request.user, 'profile', None)
+#     if request.method == 'POST':
+#         order = Order.objects.create(
+#             user=request.user,
+#             name=request.POST.get('name'),
+#             email=request.POST.get('email'),
+#             phone=request.POST.get('phone'),
+#             address=request.POST.get('address'),
+#             city=request.POST.get('city'),
+#             pincode=request.POST.get('pincode'),
+#             service_date=request.POST.get('service_date') or None,
+#             service_time=request.POST.get('service_time', ''),
+#             special_instructions=request.POST.get('special_instructions', ''),
+#             payment_method=request.POST.get('payment_method', 'cod'),
+#             subtotal=subtotal, discount=discount, total=total, coupon=coupon_obj,
+#         )
+#         for item in items:
+#             OrderItem.objects.create(order=order, service=item.service, quantity=item.quantity, price=item.service.get_final_price())
+#         cart.items.all().delete()
+#         if 'coupon' in request.session:
+#             del request.session['coupon']
+#         messages.success(request, f'Order {order.order_id} successfully place ho gaya!')
+#         return redirect('order_success', order_id=order.order_id)
+#     return render(request, 'store/checkout.html', {
+#         'items': items, 'subtotal': subtotal, 'discount': discount, 'total': total, 'profile': profile
+#     })
 
 @login_required
 def checkout(request):
@@ -139,7 +269,11 @@ def checkout(request):
                 discount = coupon_obj.discount_value
         except:
             pass
-    total = subtotal - discount
+
+    # ✅ GST 18% add kiya
+    gst_amount = round((subtotal - discount) * 18 / 100, 2)
+    total = subtotal - discount + gst_amount
+
     profile = getattr(request.user, 'profile', None)
     if request.method == 'POST':
         order = Order.objects.create(
@@ -163,8 +297,10 @@ def checkout(request):
             del request.session['coupon']
         messages.success(request, f'Order {order.order_id} successfully place ho gaya!')
         return redirect('order_success', order_id=order.order_id)
+
     return render(request, 'store/checkout.html', {
-        'items': items, 'subtotal': subtotal, 'discount': discount, 'total': total, 'profile': profile
+        'items': items, 'subtotal': subtotal, 'discount': discount,
+        'gst_amount': gst_amount, 'total': total, 'profile': profile  # ✅ gst_amount bhi pass kiya
     })
 
 @login_required
