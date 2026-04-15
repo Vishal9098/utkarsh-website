@@ -6,17 +6,17 @@
 /* ── Slot Grid ── */
 .slot-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
   gap: 10px;
   margin-top: 10px;
 }
 
-.slot-btn {
+.slot-label {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 12px 8px;
+  padding: 14px 8px;
   border: 2px solid #e2e8f0;
   border-radius: 12px;
   background: #fff;
@@ -25,97 +25,39 @@
   font-size: 13px;
   font-weight: 600;
   color: #374151;
-  position: relative;
-  min-height: 64px;
+  min-height: 68px;
+  user-select: none;
 }
 
-.slot-btn:hover:not(.booked):not(.loading) {
+.slot-label:hover {
   border-color: var(--primary, #f59e0b);
   background: #fffbeb;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(245,158,11,0.15);
 }
 
-.slot-btn.selected {
+.slot-label input[type="radio"] {
+  display: none;
+}
+
+.slot-label input[type="radio"]:checked + .slot-inner {
+  /* handled via JS class */
+}
+
+.slot-label.selected {
   border-color: var(--primary, #f59e0b);
   background: var(--primary, #f59e0b);
   color: #fff;
   box-shadow: 0 4px 16px rgba(245,158,11,0.35);
 }
 
-.slot-btn.booked {
-  background: #f3f4f6;
-  border-color: #e5e7eb;
-  color: #9ca3af;
-  cursor: not-allowed;
-  text-decoration: line-through;
-}
-
-.slot-btn.booked::after {
-  content: "Booked";
-  display: block;
-  font-size: 10px;
-  font-weight: 700;
-  color: #ef4444;
-  text-decoration: none;
-  margin-top: 2px;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-}
-
-.slot-btn.loading {
-  background: #f9fafb;
-  border-color: #e5e7eb;
-  cursor: wait;
-  animation: pulse 1.5s infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
-}
-
 .slot-icon {
-  font-size: 18px;
-  margin-bottom: 4px;
+  font-size: 20px;
+  margin-bottom: 5px;
+  display: block;
 }
 
-/* ── Full day booked alert ── */
-.day-full-alert {
-  display: none;
-  background: linear-gradient(135deg, #fef2f2, #fee2e2);
-  border: 1px solid #fca5a5;
-  border-radius: 12px;
-  padding: 14px 18px;
-  margin-top: 12px;
-}
-
-.day-full-alert.show { display: block; }
-
-/* ── Date hint ── */
-.date-hint {
-  font-size: 12px;
-  color: #6b7280;
-  margin-top: 6px;
-}
-
-.date-hint.success { color: #059669; }
-.date-hint.error   { color: #dc2626; }
-
-/* ── Slot loading placeholder ── */
-.slot-placeholder {
-  display: none;
-  color: #6b7280;
-  font-size: 13px;
-  padding: 20px;
-  text-align: center;
-  border: 2px dashed #e5e7eb;
-  border-radius: 12px;
-  margin-top: 10px;
-}
-.slot-placeholder.show { display: block; }
-
-/* ── Selected slot summary ── */
+/* ── Selected slot badge ── */
 .selected-slot-badge {
   display: none;
   align-items: center;
@@ -156,9 +98,6 @@
     {% endif %}
 
     <form method="POST" id="checkout-form">{% csrf_token %}
-
-      <!-- Hidden field for selected time -->
-      <input type="hidden" name="service_time" id="service_time_hidden" value="">
 
     <div class="row g-4">
 
@@ -201,7 +140,7 @@
           </div>
         </div>
 
-        <!-- ✅ Service Scheduling — Dynamic Slot System -->
+        <!-- Service Scheduling -->
         <div class="card border-0 shadow-sm p-4 mb-4">
           <h5 class="fw-bold mb-3">
             <i class="fas fa-calendar-alt me-2" style="color:var(--primary);"></i>Service Scheduling
@@ -221,42 +160,32 @@
                    max="{{ max_date }}"
                    {% if next_available_date %}value="{{ next_available_date }}"{% endif %}
                    required>
-            <div class="date-hint" id="date-hint"></div>
           </div>
 
-          <!-- Time Slot Grid -->
+          <!-- Time Slot Selection -->
           <div>
-            <label class="form-label fw-semibold">
-              🕐 Available Time Slots *
-            </label>
+            <label class="form-label fw-semibold">🕐 Time Slot Select Karein *</label>
+            <div class="slot-grid" id="slot-grid">
 
-            <!-- Loading placeholder -->
-            <div class="slot-placeholder show" id="slot-placeholder">
-              <i class="fas fa-calendar-day fa-2x mb-2 d-block" style="color:#d1d5db;"></i>
-              Pehle date select karein — phir slots dikhenge
+              {% for slot in all_time_slots %}
+              <label class="slot-label" onclick="selectSlot(this, '{{ slot }}')">
+                <input type="radio" name="service_time" value="{{ slot }}" required>
+                <span class="slot-icon">
+                  {% if "08:00" in slot %}🌅
+                  {% elif "10:00" in slot %}☀️
+                  {% elif "12:00" in slot %}🌤️
+                  {% elif "02:00" in slot %}🌇
+                  {% elif "04:00" in slot %}🌆
+                  {% else %}🕐
+                  {% endif %}
+                </span>
+                {{ slot }}
+              </label>
+              {% endfor %}
+
             </div>
 
-            <!-- Slot grid -->
-            <div class="slot-grid" id="slot-grid" style="display:none !important;">
-              <!-- JS se dynamically fill hoga -->
-            </div>
-
-            <!-- All slots booked alert -->
-            <div class="day-full-alert" id="day-full-alert">
-              <div class="d-flex align-items-start gap-3">
-                <span style="font-size:24px;">😔</span>
-                <div>
-                  <strong class="d-block mb-1">Is din ke saare slots booked hain!</strong>
-                  <span id="next-available-msg" class="text-muted" style="font-size:13px;"></span>
-                  <button type="button" class="btn btn-sm btn-outline-danger mt-2 d-block"
-                          id="jump-to-next-btn" style="display:none !important;">
-                    <i class="fas fa-arrow-right me-1"></i>Next Available Date Pe Jaao
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <!-- Selected slot badge -->
+            <!-- Selected badge -->
             <div class="selected-slot-badge" id="selected-slot-badge">
               <i class="fas fa-check-circle" style="color:#10b981;"></i>
               <span id="selected-slot-text">Slot selected</span>
@@ -264,7 +193,7 @@
           </div>
 
           <!-- Special Instructions -->
-          <div class="mt-3">
+          <div class="mt-4">
             <label class="form-label fw-semibold">Special Instructions</label>
             <textarea name="special_instructions" class="form-control" rows="2"
                       placeholder="Koi special instructions ho toh yahan likhein..."></textarea>
@@ -338,8 +267,8 @@
             <strong class="fs-5" style="color:var(--primary);">₹{{ total }}</strong>
           </div>
 
-          <!-- Selected booking summary -->
-          <div id="booking-summary" class="mb-3 p-3 rounded" style="background:#f8fafc;display:none;">
+          <!-- Booking summary preview -->
+          <div id="booking-summary" class="mb-3 p-3 rounded" style="background:#f8fafc; display:none;">
             <div class="d-flex align-items-center gap-2 mb-1">
               <i class="fas fa-calendar-check" style="color:var(--primary);"></i>
               <strong style="font-size:13px;">Booking Summary</strong>
@@ -350,7 +279,7 @@
 
           <button type="submit" id="place-order-btn"
                   class="btn btn-warning btn-lg w-100 fw-bold"
-                  style="border-radius:30px;font-size:18px;" disabled>
+                  style="border-radius:30px; font-size:18px;" disabled>
             <i class="fas fa-check-circle me-2"></i>Place Order
           </button>
           <div class="text-center mt-2">
@@ -372,32 +301,16 @@
 </section>
 
 <script>
-const SLOT_ICONS = {
-  "08:00 AM - 10:00 AM": "🌅",
-  "10:00 AM - 12:00 PM": "☀️",
-  "12:00 PM - 02:00 PM": "🌤️",
-  "02:00 PM - 04:00 PM": "🌇",
-  "04:00 PM - 06:00 PM": "🌆",
-};
+let selectedSlotValue = '';
 
-const dateInput       = document.getElementById('service_date');
-const slotGrid        = document.getElementById('slot-grid');
-const slotPlaceholder = document.getElementById('slot-placeholder');
-const dayFullAlert    = document.getElementById('day-full-alert');
-const nextAvailableMsg= document.getElementById('next-available-msg');
-const jumpBtn         = document.getElementById('jump-to-next-btn');
-const slotHiddenInput = document.getElementById('service_time_hidden');
-const submitBtn       = document.getElementById('place-order-btn');
-const selectedBadge   = document.getElementById('selected-slot-badge');
-const selectedText    = document.getElementById('selected-slot-text');
-const dateHint        = document.getElementById('date-hint');
-const bookingSummary  = document.getElementById('booking-summary');
-const bookingDateDisp = document.getElementById('booking-date-display');
-const bookingTimeDisp = document.getElementById('booking-time-display');
-const btnHint         = document.getElementById('btn-hint');
-
-let selectedSlot = '';
-let nextAvailableDate = '';
+const dateInput      = document.getElementById('service_date');
+const submitBtn      = document.getElementById('place-order-btn');
+const btnHint        = document.getElementById('btn-hint');
+const bookingSummary = document.getElementById('booking-summary');
+const bookingDateDisp= document.getElementById('booking-date-display');
+const bookingTimeDisp= document.getElementById('booking-time-display');
+const selectedBadge  = document.getElementById('selected-slot-badge');
+const selectedText   = document.getElementById('selected-slot-text');
 
 function formatDate(dateStr) {
   if (!dateStr) return '';
@@ -405,12 +318,28 @@ function formatDate(dateStr) {
   return d.toLocaleDateString('hi-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 }
 
-function setSubmitState() {
+function selectSlot(label, time) {
+  // Deselect all
+  document.querySelectorAll('.slot-label').forEach(l => l.classList.remove('selected'));
+  // Select clicked
+  label.classList.add('selected');
+  label.querySelector('input[type="radio"]').checked = true;
+  selectedSlotValue = time;
+
+  selectedText.textContent = '✅ ' + time + ' — Selected';
+  selectedBadge.classList.add('show');
+
+  updateSubmitState();
+}
+
+function updateSubmitState() {
   const hasDate = dateInput.value !== '';
-  const hasSlot = selectedSlot !== '';
+  const hasSlot = selectedSlotValue !== '';
   submitBtn.disabled = !(hasDate && hasSlot);
 
-  if (!hasDate) {
+  if (!hasDate && !hasSlot) {
+    btnHint.textContent = '📅 Date aur slot select karein';
+  } else if (!hasDate) {
     btnHint.textContent = '📅 Date select karein';
   } else if (!hasSlot) {
     btnHint.textContent = '🕐 Time slot select karein';
@@ -420,133 +349,25 @@ function setSubmitState() {
 
   if (hasDate && hasSlot) {
     bookingSummary.style.display = 'block';
-    bookingDateDisp.textContent = '📅 ' + formatDate(dateInput.value);
-    bookingTimeDisp.textContent = '🕐 ' + selectedSlot;
+    bookingDateDisp.textContent  = '📅 ' + formatDate(dateInput.value);
+    bookingTimeDisp.textContent  = '🕐 ' + selectedSlotValue;
   } else {
     bookingSummary.style.display = 'none';
   }
 }
 
-async function loadSlots(dateStr) {
-  // Reset
-  selectedSlot = '';
-  slotHiddenInput.value = '';
-  selectedBadge.classList.remove('show');
-  dayFullAlert.classList.remove('show');
-  setSubmitState();
-
-  // Show loading
-  slotPlaceholder.innerHTML = '<i class="fas fa-spinner fa-spin fa-2x mb-2 d-block" style="color:#d1d5db;"></i>Slots load ho rahe hain...';
-  slotPlaceholder.classList.add('show');
-  slotGrid.style.setProperty('display', 'none', 'important');
-
-  try {
-    const res = await fetch(`/api/slots/?date=${dateStr}`);
-    const data = await res.json();
-
-    if (data.error) {
-      dateHint.textContent = '⚠️ ' + data.error;
-      dateHint.className = 'date-hint error';
-      slotPlaceholder.innerHTML = '<i class="fas fa-exclamation-triangle fa-2x mb-2 d-block" style="color:#f59e0b;"></i>' + data.error;
-      return;
-    }
-
-    dateHint.textContent = '';
-    dateHint.className = 'date-hint';
-
-    if (data.all_booked) {
-      slotPlaceholder.classList.remove('show');
-      slotGrid.style.setProperty('display', 'none', 'important');
-      dayFullAlert.classList.add('show');
-      nextAvailableDate = data.next_available || '';
-
-      if (data.next_available) {
-        nextAvailableMsg.innerHTML = `Agli available date: <strong>${formatDate(data.next_available)}</strong>`;
-        jumpBtn.style.setProperty('display', 'inline-block', 'important');
-      } else {
-        nextAvailableMsg.textContent = 'Filhaal koi date available nahi hai. Baad mein try karein.';
-        jumpBtn.style.setProperty('display', 'none', 'important');
-      }
-      return;
-    }
-
-    // Build slot buttons
-    slotGrid.innerHTML = '';
-    data.slots.forEach(slot => {
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'slot-btn' + (slot.is_booked ? ' booked' : '');
-      const icon = SLOT_ICONS[slot.time] || '🕐';
-      btn.innerHTML = `<span class="slot-icon">${icon}</span>${slot.time}`;
-      btn.dataset.time = slot.time;
-
-      if (!slot.is_booked) {
-        btn.addEventListener('click', () => selectSlot(btn, slot.time));
-      }
-
-      slotGrid.appendChild(btn);
-    });
-
-    slotPlaceholder.classList.remove('show');
-    slotGrid.style.setProperty('display', 'grid', 'important');
-
-    const availableCount = data.slots.filter(s => !s.is_booked).length;
-    dateHint.textContent = `✅ ${availableCount} slots available hain`;
-    dateHint.className = 'date-hint success';
-
-  } catch (e) {
-    slotPlaceholder.innerHTML = '<i class="fas fa-wifi fa-2x mb-2 d-block" style="color:#d1d5db;"></i>Network error. Refresh karein.';
-    console.error(e);
-  }
-}
-
-function selectSlot(btn, time) {
-  // Deselect all
-  document.querySelectorAll('.slot-btn.selected').forEach(b => b.classList.remove('selected'));
-
-  // Select clicked
-  btn.classList.add('selected');
-  selectedSlot = time;
-  slotHiddenInput.value = time;
-
-  selectedText.textContent = `✅ ${time} — Selected`;
-  selectedBadge.classList.add('show');
-  setSubmitState();
-}
-
-// Jump to next available date
-jumpBtn.addEventListener('click', () => {
-  if (nextAvailableDate) {
-    dateInput.value = nextAvailableDate;
-    loadSlots(nextAvailableDate);
-  }
-});
-
-// Date change
-dateInput.addEventListener('change', () => {
-  const dateStr = dateInput.value;
-  if (dateStr) {
-    loadSlots(dateStr);
-  }
-});
+dateInput.addEventListener('change', updateSubmitState);
 
 // Form submit validation
-document.getElementById('checkout-form').addEventListener('submit', (e) => {
-  if (!dateInput.value || !selectedSlot) {
+document.getElementById('checkout-form').addEventListener('submit', function(e) {
+  if (!dateInput.value || !selectedSlotValue) {
     e.preventDefault();
     alert('Date aur time slot dono select karna zaroori hai!');
-    return;
   }
-  slotHiddenInput.value = selectedSlot;
 });
 
-// Auto-load if default date set
-window.addEventListener('DOMContentLoaded', () => {
-  if (dateInput.value) {
-    loadSlots(dateInput.value);
-  }
-  setSubmitState();
-});
+// Init
+updateSubmitState();
 </script>
 
 {% endblock %}
