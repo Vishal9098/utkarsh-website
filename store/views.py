@@ -179,13 +179,13 @@ def add_to_cart(request, service_id):
         item.quantity = quantity
     item.save()
 
-    messages.success(request, f'"{service.name}" cart mein add ho gaya! (x{item.quantity})')
+    messages.success(request, f'"{service.name}" Added to cart! (x{item.quantity})')
     return redirect(request.META.get('HTTP_REFERER', '/'))
 
 def remove_from_cart(request, item_id):
     item = get_object_or_404(CartItem, id=item_id)
     item.delete()
-    messages.success(request, 'Item cart se remove ho gaya.')
+    messages.success(request, 'Item removed from cart.')
     return redirect('cart')
 
 def update_cart(request, item_id):
@@ -229,7 +229,7 @@ def apply_coupon(request):
     try:
         coupon = Coupon.objects.get(code=code, is_active=True)
         request.session['coupon'] = code
-        messages.success(request, f'Coupon "{code}" successfully apply ho gaya!')
+        messages.success(request, f'Coupon "{code}" Applied successfully!')
     except:
         messages.error(request, 'Invalid ya expired coupon code.')
     return redirect('cart')

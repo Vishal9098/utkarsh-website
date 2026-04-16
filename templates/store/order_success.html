@@ -158,7 +158,7 @@
     <div class="success-banner">
       <div class="success-icon"><i class="fas fa-check"></i></div>
       <h2>Order Successful!</h2>
-      <p>Aapka order successfully place ho gaya hai.</p>
+      <p>Your order has been placed successfully.</p>
     </div>
 
     <div class="order-info-box">
@@ -185,9 +185,9 @@
     </div>
 
     <div class="contact-note">
-      <i class="fas fa-phone-alt"></i>
-      Hum aapke phone <strong>{{ order.phone }}</strong> par jald hi contact karenge service schedule karne ke liye.
-    </div>
+  <i class="fas fa-phone-alt"></i>
+  We will contact you soon on your phone <strong>{{ order.phone }}</strong> to schedule the service.
+</div>
 
     <div class="success-actions">
 
@@ -202,8 +202,9 @@
         <div class="invoice-locked-box">
           <div class="lock-icon"><i class="fas fa-lock"></i></div>
           <div class="lock-text">
-            <strong>Invoice abhi available nahi hai</strong>
-            <small>Admin ke approve karne ke baad aap invoice download kar payenge. My Orders mein check karte rahein.</small>
+            <strong>Invoice is not available yet</strong>
+            <!-- <small>Admin ke approve karne ke baad aap invoice download kar payenge. My Orders mein check karte rahein.</small> -->
+             <small>Once approved by the admin, you will be able to download the invoice. Please keep checking in My Orders.</small>
           </div>
         </div>
       {% endif %}

@@ -16,7 +16,11 @@
         </a>
       </div>
       {% empty %}
-      <div class="col-12 text-center py-5"><i class="fas fa-search fa-5x text-muted mb-3"></i><h5 class="text-muted">Koi result nahi mila "{{ query }}" ke liye</h5><a href="{% url 'all_services' %}" class="btn btn-primary mt-3" style="border-radius:25px;">All Services Dekhein</a></div>
+      <div class="col-12 text-center py-5">
+        <i class="fas fa-search fa-5x text-muted mb-3"></i>
+        <h5 class="text-muted">No results found for "{{ query }}"</h5>
+        <a href="{% url 'all_services' %}" class="btn btn-primary mt-3" style="border-radius:25px;">View All Services</a>
+      </div>
       {% endfor %}
     </div>
   </div>
