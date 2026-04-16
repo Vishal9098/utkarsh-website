@@ -220,7 +220,7 @@ def checkout(request):
 
         # Validation
         if not service_date_str or not service_time:
-            messages.error(request, '❌ Date aur time dono select karna zaroori hai!')
+            messages.error(request, '❌ Selecting both date and time is required!')
             return render(request, 'store/checkout.html', ctx)
 
         try:
@@ -230,7 +230,7 @@ def checkout(request):
             return render(request, 'store/checkout.html', ctx)
 
         if service_date <= date.today():
-            messages.error(request, '❌ Minimum 1 din advance booking zaroori hai!')
+            messages.error(request, '❌Minimum 1 day advance booking is required!')
             return render(request, 'store/checkout.html', ctx)
 
         if service_time not in all_time_slots:
@@ -271,7 +271,7 @@ def checkout(request):
         if 'coupon' in request.session:
             del request.session['coupon']
 
-        messages.success(request, f'✅ Order {order.order_id} successfully place ho gaya!')
+        messages.success(request, f'✅ Order {order.order_id} It has been successfully placed!')
         return redirect('order_success', order_id=order.order_id)
 
     return render(request, 'store/checkout.html', ctx)
@@ -331,7 +331,7 @@ def contact(request):
             phone=request.POST.get('phone'),
             message=request.POST.get('message'),
         )
-        messages.success(request, 'Aapka message send ho gaya! Hum jald hi contact karenge.')
+        messages.success(request, 'Your message has been sent! We will contact you soon.')
         return redirect('contact')
     return render(request, 'store/contact.html')
 
