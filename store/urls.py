@@ -22,5 +22,7 @@ urlpatterns = [
     path('review/add/<int:service_id>/', views.add_review, name='add_review'),
     path('search/', views.search, name='search'),
     path('order/<str:order_id>/invoice/', views.download_invoice, name='download_invoice'),
-    # path('api/slots/', views.get_slots_api, name='get_slots_api'),
+    # path('invoice/<int:order_id>/', views.download_invoice, name='download_invoice'),
+    path('invoice/<str:order_id>/', views.download_invoice, name='download_invoice'),
+   
 ]

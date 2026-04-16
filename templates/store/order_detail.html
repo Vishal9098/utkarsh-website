@@ -41,6 +41,38 @@
           <p class="mb-1"><strong>Method:</strong> {{ order.get_payment_method_display }}</p>
           <p class="mb-0"><strong>Status:</strong> {% if order.payment_status %}<span class="text-success">Paid</span>{% else %}<span class="text-warning">Pending</span>{% endif %}</p>
         </div>
+
+
+
+        <div class="card border-0 shadow-sm p-4 mt-3 text-center">
+
+  {% if order.invoice_approved %}
+    <a href="{% url 'download_invoice' order.order_id %}" 
+       class="btn btn-dark w-100">
+      <i class="fas fa-file-pdf me-2"></i>Download Invoice (PDF)
+    </a>
+  {% else %}
+    <p class="text-warning mb-2">
+      ⏳ Invoice approval pending
+    </p>
+    <small class="text-muted">
+      Admin approve karega tabhi download available hoga
+    </small>
+  {% endif %}
+
+</div>
+
+
+ 
+
+
+
+
+
+
+
+
+
       </div>
     </div>
   </div>
