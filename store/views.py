@@ -10,96 +10,14 @@ import json as pyjson
 from datetime import date, timedelta
 
 # ============================================================
-# Slot helpers
+# Slot helpers - SIMPLE VERSION (no BookingSlot)
 # ============================================================
-
-def get_booked_slots_for_month(year, month):
-    """Ek month ke saare booked slots return karo {date: [times]}"""
-    from django.db.models import Q
-    slots = BookingSlot.objects.filter(
-        is_booked=True,
-        service_date__year=year,
-        service_date__month=month,
-    ).values('service_date', 'service_time')
-
-    booked = {}
-    for s in slots:
-        key = str(s['service_date'])
-        if key not in booked:
-            booked[key] = []
-        booked[key].append(s['service_time'])
-    return booked
-
 
 def get_next_available_date(from_date=None):
-    """Pehli available date find karo jahan kam se kam ek slot free ho"""
+    """Simple version - next date return karo (no slot check)"""
     if from_date is None:
         from_date = date.today() + timedelta(days=1)
-
-    for i in range(60):  # max 60 din aage tak dhundo
-        check_date = from_date + timedelta(days=i)
-        booked_times = list(
-            BookingSlot.objects.filter(
-                service_date=check_date,
-                is_booked=True
-            ).values_list('service_time', flat=True)
-        )
-        # Agar saare slots booked nahi hain toh yeh date available hai
-        if len(booked_times) < len(ALL_TIME_SLOTS):
-            return check_date
-    return None
-
-
-# ============================================================
-# API: Slots for a specific date (AJAX call)
-# ============================================================
-
-def get_slots_api(request):
-    """
-    GET /api/slots/?date=2025-04-15
-    Returns: {slots: [{time, is_booked}, ...], all_booked: bool, next_available: 'YYYY-MM-DD'}
-    """
-    date_str = request.GET.get('date', '')
-    if not date_str:
-        return JsonResponse({'error': 'Date required'}, status=400)
-
-    try:
-        selected_date = date.fromisoformat(date_str)
-    except ValueError:
-        return JsonResponse({'error': 'Invalid date'}, status=400)
-
-    # Minimum 1 din advance booking
-    if selected_date <= date.today():
-        return JsonResponse({'error': 'Aaj ya pehle ki date select nahi kar sakte'}, status=400)
-
-    # Is date ke booked slots
-    booked_times = set(
-        BookingSlot.objects.filter(
-            service_date=selected_date,
-            is_booked=True
-        ).values_list('service_time', flat=True)
-    )
-
-    slots = []
-    for t in ALL_TIME_SLOTS:
-        slots.append({
-            'time': t,
-            'is_booked': t in booked_times,
-        })
-
-    all_booked = len(booked_times) >= len(ALL_TIME_SLOTS)
-
-    next_available = None
-    if all_booked:
-        next_date = get_next_available_date(selected_date + timedelta(days=1))
-        if next_date:
-            next_available = str(next_date)
-
-    return JsonResponse({
-        'slots': slots,
-        'all_booked': all_booked,
-        'next_available': next_available,
-    })
+    return from_date
 
 
 # ============================================================
@@ -236,7 +154,7 @@ def apply_coupon(request):
 
 
 # ============================================================
-# ✅ CHECKOUT VIEW — Global Slot Lock + Smart Next Date
+# CHECKOUT VIEW — Simple version (no slot lock)
 # ============================================================
 @login_required
 def checkout(request):
@@ -269,8 +187,17 @@ def checkout(request):
     # Maximum booking date = 30 din aage
     max_date = date.today() + timedelta(days=30)
 
-    # Next available date find karo (default suggest)
+    # Next available date
     next_available = get_next_available_date(min_date)
+
+    # All time slots
+    all_time_slots = [
+        "08:00 AM - 10:00 AM",
+        "10:00 AM - 12:00 PM",
+        "12:00 PM - 02:00 PM",
+        "02:00 PM - 04:00 PM",
+        "04:00 PM - 06:00 PM",
+    ]
 
     ctx = {
         'items': items,
@@ -282,11 +209,11 @@ def checkout(request):
         'min_date': str(min_date),
         'max_date': str(max_date),
         'next_available_date': str(next_available) if next_available else '',
-        'all_time_slots': ALL_TIME_SLOTS,
+        'all_time_slots': all_time_slots,
         'today': date.today(),
     }
 
-    # ── POST: Order place karo ──
+    # POST: Order place karo
     if request.method == 'POST':
         service_date_str = request.POST.get('service_date') or None
         service_time = request.POST.get('service_time', '').strip()
@@ -306,85 +233,38 @@ def checkout(request):
             messages.error(request, '❌ Minimum 1 din advance booking zaroori hai!')
             return render(request, 'store/checkout.html', ctx)
 
-        if service_time not in ALL_TIME_SLOTS:
+        if service_time not in all_time_slots:
             messages.error(request, '❌ Invalid time slot!')
             return render(request, 'store/checkout.html', ctx)
 
-        # ✅ Transaction + DB Lock — race condition impossible
-        try:
-            with transaction.atomic():
+        # Create order (no slot check)
+        with transaction.atomic():
+            order = Order.objects.create(
+                user=request.user,
+                name=request.POST.get('name'),
+                email=request.POST.get('email'),
+                phone=request.POST.get('phone'),
+                address=request.POST.get('address'),
+                city=request.POST.get('city'),
+                pincode=request.POST.get('pincode'),
+                service_date=service_date,
+                service_time=service_time,
+                special_instructions=request.POST.get('special_instructions', ''),
+                payment_method=request.POST.get('payment_method', 'cod'),
+                subtotal=subtotal,
+                discount=discount,
+                total=total,
+                coupon=coupon_obj,
+            )
 
-                # Global slot check — service se independent
-                already_booked = BookingSlot.objects.select_for_update().filter(
-                    service_date=service_date,
-                    service_time=service_time,
-                    is_booked=True
-                ).exists()
-
-                if already_booked:
-                    # Next available slot suggest karo
-                    next_date = get_next_available_date(service_date)
-                    next_msg = f" Agli available date: <strong>{next_date.strftime('%d %B %Y')}</strong>" if next_date else ""
-                    messages.error(
-                        request,
-                        f'❌ {service_date.strftime("%d %B %Y")} ko '
-                        f'"{service_time}" slot already booked hai!{next_msg} '
-                        f'Koi aur date/time select karein.'
-                    )
-                    return render(request, 'store/checkout.html', ctx)
-
-                # Order create karo
-                order = Order.objects.create(
-                    user=request.user,
-                    name=request.POST.get('name'),
-                    email=request.POST.get('email'),
-                    phone=request.POST.get('phone'),
-                    address=request.POST.get('address'),
-                    city=request.POST.get('city'),
-                    pincode=request.POST.get('pincode'),
-                    service_date=service_date,
-                    service_time=service_time,
-                    special_instructions=request.POST.get('special_instructions', ''),
-                    payment_method=request.POST.get('payment_method', 'cod'),
-                    subtotal=subtotal,
-                    discount=discount,
-                    total=total,
-                    coupon=coupon_obj,
+            # OrderItems save karo
+            for item in items:
+                OrderItem.objects.create(
+                    order=order,
+                    service=item.service,
+                    quantity=item.quantity,
+                    price=item.service.get_final_price()
                 )
-
-                # OrderItems save karo
-                for item in items:
-                    OrderItem.objects.create(
-                        order=order,
-                        service=item.service,
-                        quantity=item.quantity,
-                        price=item.service.get_final_price()
-                    )
-
-                # ✅ Global slot book karo — ek team = ek booking
-                slot, created = BookingSlot.objects.select_for_update().get_or_create(
-                    service_date=service_date,
-                    service_time=service_time,
-                    defaults={'order': order, 'is_booked': True}
-                )
-
-                if not created:
-                    # Race condition: dono users ne simultaneously submit kiya
-                    if slot.is_booked:
-                        messages.error(
-                            request,
-                            f'❌ Yeh slot abhi kisi aur ne book kar liya! '
-                            f'Koi aur time chunein.'
-                        )
-                        return render(request, 'store/checkout.html', ctx)
-                    else:
-                        slot.is_booked = True
-                        slot.order = order
-                        slot.save()
-
-        except Exception as e:
-            messages.error(request, '❌ Order place karne mein error aaya. Dobara try karein.')
-            return render(request, 'store/checkout.html', ctx)
 
         # Cart clear karo
         cart.items.all().delete()

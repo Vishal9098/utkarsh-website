@@ -2,78 +2,6 @@
 {% block title %}Checkout - Utkarsh Cleaning{% endblock %}
 {% block content %}
 
-<style>
-/* ── Slot Grid ── */
-.slot-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  gap: 10px;
-  margin-top: 10px;
-}
-
-.slot-label {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 14px 8px;
-  border: 2px solid #e2e8f0;
-  border-radius: 12px;
-  background: #fff;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-size: 13px;
-  font-weight: 600;
-  color: #374151;
-  min-height: 68px;
-  user-select: none;
-}
-
-.slot-label:hover {
-  border-color: var(--primary, #f59e0b);
-  background: #fffbeb;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(245,158,11,0.15);
-}
-
-.slot-label input[type="radio"] {
-  display: none;
-}
-
-.slot-label input[type="radio"]:checked + .slot-inner {
-  /* handled via JS class */
-}
-
-.slot-label.selected {
-  border-color: var(--primary, #f59e0b);
-  background: var(--primary, #f59e0b);
-  color: #fff;
-  box-shadow: 0 4px 16px rgba(245,158,11,0.35);
-}
-
-.slot-icon {
-  font-size: 20px;
-  margin-bottom: 5px;
-  display: block;
-}
-
-/* ── Selected slot badge ── */
-.selected-slot-badge {
-  display: none;
-  align-items: center;
-  gap: 8px;
-  background: #ecfdf5;
-  border: 1px solid #6ee7b7;
-  border-radius: 10px;
-  padding: 10px 14px;
-  margin-top: 12px;
-  font-size: 13px;
-  font-weight: 600;
-  color: #065f46;
-}
-.selected-slot-badge.show { display: flex; }
-</style>
-
 <div class="breadcrumb-section">
   <div class="container">
     <ol class="breadcrumb mb-0">
@@ -101,7 +29,7 @@
 
     <div class="row g-4">
 
-      <!-- ─── LEFT COLUMN ─── -->
+      <!-- LEFT COLUMN -->
       <div class="col-lg-7">
 
         <!-- Personal Info -->
@@ -145,58 +73,29 @@
           <h5 class="fw-bold mb-3">
             <i class="fas fa-calendar-alt me-2" style="color:var(--primary);"></i>Service Scheduling
           </h5>
-
-          <!-- Date Picker -->
-          <div class="mb-4">
-            <label class="form-label fw-semibold">
-              📅 Service Date *
-              <span class="text-muted fw-normal">(Minimum 1 din advance)</span>
-            </label>
-            <input type="date"
-                   name="service_date"
-                   id="service_date"
-                   class="form-control"
-                   min="{{ min_date }}"
-                   max="{{ max_date }}"
-                   {% if next_available_date %}value="{{ next_available_date }}"{% endif %}
-                   required>
-          </div>
-
-          <!-- Time Slot Selection -->
-          <div>
-            <label class="form-label fw-semibold">🕐 Time Slot Select Karein *</label>
-            <div class="slot-grid" id="slot-grid">
-
-              {% for slot in all_time_slots %}
-              <label class="slot-label" onclick="selectSlot(this, '{{ slot }}')">
-                <input type="radio" name="service_time" value="{{ slot }}" required>
-                <span class="slot-icon">
-                  {% if "08:00" in slot %}🌅
-                  {% elif "10:00" in slot %}☀️
-                  {% elif "12:00" in slot %}🌤️
-                  {% elif "02:00" in slot %}🌇
-                  {% elif "04:00" in slot %}🌆
-                  {% else %}🕐
-                  {% endif %}
-                </span>
-                {{ slot }}
-              </label>
-              {% endfor %}
-
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">📅 Service Date *</label>
+              <input type="date" name="service_date" id="service_date"
+                     class="form-control"
+                     min="{{ min_date }}" max="{{ max_date }}"
+                     {% if next_available_date %}value="{{ next_available_date }}"{% endif %}
+                     required>
             </div>
-
-            <!-- Selected badge -->
-            <div class="selected-slot-badge" id="selected-slot-badge">
-              <i class="fas fa-check-circle" style="color:#10b981;"></i>
-              <span id="selected-slot-text">Slot selected</span>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">🕐 Service Time *</label>
+              <select name="service_time" id="service_time" class="form-select" required>
+                <option value="">-- Time select karein --</option>
+                {% for slot in all_time_slots %}
+                <option value="{{ slot }}">{{ slot }}</option>
+                {% endfor %}
+              </select>
             </div>
-          </div>
-
-          <!-- Special Instructions -->
-          <div class="mt-4">
-            <label class="form-label fw-semibold">Special Instructions</label>
-            <textarea name="special_instructions" class="form-control" rows="2"
-                      placeholder="Koi special instructions ho toh yahan likhein..."></textarea>
+            <div class="col-12">
+              <label class="form-label fw-semibold">Special Instructions</label>
+              <textarea name="special_instructions" class="form-control" rows="2"
+                        placeholder="Koi special instructions ho toh yahan likhein..."></textarea>
+            </div>
           </div>
         </div>
 
@@ -232,7 +131,7 @@
 
       </div><!-- end col-lg-7 -->
 
-      <!-- ─── RIGHT COLUMN: Order Summary ─── -->
+      <!-- RIGHT COLUMN: Order Summary -->
       <div class="col-lg-5">
         <div class="card border-0 shadow-sm p-4 sticky-top" style="top:100px;">
           <h5 class="fw-bold mb-3">Order Summary</h5>
@@ -284,7 +183,7 @@
           </button>
           <div class="text-center mt-2">
             <small class="text-muted" id="btn-hint">
-              <i class="fas fa-info-circle me-1"></i>Date aur slot select karein
+              <i class="fas fa-info-circle me-1"></i>Date aur time select karein
             </small>
           </div>
           <div class="text-center mt-2">
@@ -301,16 +200,13 @@
 </section>
 
 <script>
-let selectedSlotValue = '';
-
-const dateInput      = document.getElementById('service_date');
-const submitBtn      = document.getElementById('place-order-btn');
-const btnHint        = document.getElementById('btn-hint');
-const bookingSummary = document.getElementById('booking-summary');
-const bookingDateDisp= document.getElementById('booking-date-display');
-const bookingTimeDisp= document.getElementById('booking-time-display');
-const selectedBadge  = document.getElementById('selected-slot-badge');
-const selectedText   = document.getElementById('selected-slot-text');
+const dateInput       = document.getElementById('service_date');
+const timeInput       = document.getElementById('service_time');
+const submitBtn       = document.getElementById('place-order-btn');
+const btnHint         = document.getElementById('btn-hint');
+const bookingSummary  = document.getElementById('booking-summary');
+const bookingDateDisp = document.getElementById('booking-date-display');
+const bookingTimeDisp = document.getElementById('booking-time-display');
 
 function formatDate(dateStr) {
   if (!dateStr) return '';
@@ -318,55 +214,35 @@ function formatDate(dateStr) {
   return d.toLocaleDateString('hi-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 }
 
-function selectSlot(label, time) {
-  // Deselect all
-  document.querySelectorAll('.slot-label').forEach(l => l.classList.remove('selected'));
-  // Select clicked
-  label.classList.add('selected');
-  label.querySelector('input[type="radio"]').checked = true;
-  selectedSlotValue = time;
-
-  selectedText.textContent = '✅ ' + time + ' — Selected';
-  selectedBadge.classList.add('show');
-
-  updateSubmitState();
-}
-
 function updateSubmitState() {
   const hasDate = dateInput.value !== '';
-  const hasSlot = selectedSlotValue !== '';
-  submitBtn.disabled = !(hasDate && hasSlot);
+  const hasTime = timeInput.value !== '';
+  submitBtn.disabled = !(hasDate && hasTime);
 
-  if (!hasDate && !hasSlot) {
-    btnHint.textContent = '📅 Date aur slot select karein';
-  } else if (!hasDate) {
-    btnHint.textContent = '📅 Date select karein';
-  } else if (!hasSlot) {
-    btnHint.textContent = '🕐 Time slot select karein';
-  } else {
-    btnHint.textContent = '✅ Booking ready hai!';
-  }
+  if (!hasDate && !hasTime)   btnHint.textContent = '📅 Date aur time select karein';
+  else if (!hasDate)          btnHint.textContent = '📅 Date select karein';
+  else if (!hasTime)          btnHint.textContent = '🕐 Time select karein';
+  else                        btnHint.textContent = '✅ Booking ready hai!';
 
-  if (hasDate && hasSlot) {
+  if (hasDate && hasTime) {
     bookingSummary.style.display = 'block';
     bookingDateDisp.textContent  = '📅 ' + formatDate(dateInput.value);
-    bookingTimeDisp.textContent  = '🕐 ' + selectedSlotValue;
+    bookingTimeDisp.textContent  = '🕐 ' + timeInput.value;
   } else {
     bookingSummary.style.display = 'none';
   }
 }
 
 dateInput.addEventListener('change', updateSubmitState);
+timeInput.addEventListener('change', updateSubmitState);
 
-// Form submit validation
 document.getElementById('checkout-form').addEventListener('submit', function(e) {
-  if (!dateInput.value || !selectedSlotValue) {
+  if (!dateInput.value || !timeInput.value) {
     e.preventDefault();
-    alert('Date aur time slot dono select karna zaroori hai!');
+    alert('Date aur time dono select karna zaroori hai!');
   }
 });
 
-// Init
 updateSubmitState();
 </script>
 
