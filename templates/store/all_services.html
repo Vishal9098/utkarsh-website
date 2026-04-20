@@ -6,10 +6,9 @@
 {% block extra_css %}
 <style>
 @media (max-width: 991.98px) {
-  .sidebar-col { display: none !important; }
   .breadcrumb-section { display: none !important; }
   .page-title-row { display: none !important; }
-  .col-12.col-lg-9 { width: 100% !important; padding-top: 8px !important; }
+  .col-12.col-lg-12 { width: 100% !important; padding-top: 8px !important; }
   section.py-5 { padding-top: 8px !important; padding-bottom: 8px !important; }
   .col-6 { flex: 0 0 auto; width: 50% !important; }
   .card-img-top { height: 130px !important; }
@@ -37,49 +36,8 @@
   <div class="container">
     <div class="row g-4">
 
-      <!-- SIDEBAR - desktop only -->
-      <div class="col-lg-3 sidebar-col d-none d-lg-block">
-        <!-- Search -->
-        <div class="card border-0 shadow-sm p-3 mb-3">
-          <h6 class="fw-bold mb-3"><i class="fas fa-search me-2" style="color:var(--primary);"></i>Search</h6>
-          <form method="GET" action="{% url 'all_services' %}">
-            {% if selected_category %}<input type="hidden" name="category" value="{{ selected_category.slug }}">{% endif %}
-            <div class="input-group">
-              <input type="text" name="q" class="form-control" placeholder="Service dhundein..." value="{{ search|default:'' }}">
-              <button class="btn btn-primary" type="submit"><i class="fas fa-search"></i></button>
-            </div>
-          </form>
-        </div>
-
-        <!-- Sort -->
-        <div class="card border-0 shadow-sm p-3 mb-3">
-          <h6 class="fw-bold mb-3"><i class="fas fa-sort me-2" style="color:var(--primary);"></i>Sort By</h6>
-          <select class="form-select" onchange="window.location='{% url 'all_services' %}{% if selected_category %}?category={{ selected_category.slug }}&{% else %}?{% endif %}sort='+this.value">
-            <option value="" {% if not sort %}selected{% endif %}>Default</option>
-            <option value="price_low" {% if sort == 'price_low' %}selected{% endif %}>Price: Low to High</option>
-            <option value="price_high" {% if sort == 'price_high' %}selected{% endif %}>Price: High to Low</option>
-            <option value="rating" {% if sort == 'rating' %}selected{% endif %}>Top Rated</option>
-          </select>
-        </div>
-
-        <!-- Categories -->
-        <div class="card border-0 shadow-sm p-3">
-          <h6 class="fw-bold mb-3"><i class="fas fa-th-list me-2" style="color:var(--primary);"></i>Categories</h6>
-          <a href="{% url 'all_services' %}" class="d-flex justify-content-between align-items-center py-2 px-2 rounded mb-1 text-decoration-none {% if not selected_category %}fw-bold{% endif %}" style="color:{% if not selected_category %}var(--primary){% else %}#555{% endif %};">
-            All Services
-            <span class="badge bg-primary rounded-pill">{{ total_count }}</span>
-          </a>
-          {% for cat in categories %}
-          <a href="{% url 'all_services' %}?category={{ cat.slug }}" class="d-flex justify-content-between align-items-center py-2 px-2 rounded mb-1 text-decoration-none {% if selected_category.slug == cat.slug %}fw-bold{% endif %}" style="color:{% if selected_category.slug == cat.slug %}var(--primary){% else %}#555{% endif %};">
-            {{ cat.name }}
-            <span class="badge bg-primary rounded-pill">{{ cat.services.count }}</span>
-          </a>
-          {% endfor %}
-        </div>
-      </div>
-
       <!-- SERVICES GRID -->
-      <div class="col-12 col-lg-9">
+      <div class="col-12">
 
         <!-- Page title - desktop only -->
         <div class="page-title-row d-none d-lg-flex justify-content-between align-items-center mb-4">

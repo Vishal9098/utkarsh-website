@@ -83,7 +83,7 @@
 }
 .cat-card .mobile-title { display: none; }
 
-/* ===== MOBILE - PURANA WALA SAME ===== */
+/* ===== MOBILE ===== */
 @media(max-width:768px){
   .cat-grid-wrap {
     display: grid !important;
@@ -91,7 +91,6 @@
     gap: 12px !important;
     padding: 0 10px !important;
   }
-
   .cat-card {
     border: none !important;
     border-radius: 22px !important;
@@ -101,11 +100,7 @@
     overflow: visible !important;
   }
   .cat-card:hover { transform: translateY(-4px) !important; }
-
-  /* img-wrap desktop wala hide karo mobile pe */
   .cat-card .img-wrap { display: none !important; }
-
-  /* mobile-img-box show karo */
   .cat-card .mobile-img-box {
     display: flex !important;
     height: 90px;
@@ -123,9 +118,7 @@
     object-fit: cover;
     border-radius: 14px;
   }
-
   .cat-card .cat-label { display: none !important; }
-
   .cat-card .mobile-title {
     display: block !important;
     font-size: 11px;
@@ -135,6 +128,11 @@
     padding: 5px 2px 0;
     line-height: 1.3;
   }
+
+  /* WHY CHOOSE US - mobile gap kam */
+  .why-section .row {
+    --bs-gutter-y: 8px !important;
+  }
 }
 </style>
 
@@ -143,8 +141,6 @@
   <div class="carousel-inner">
     <div class="carousel-item active">
       <img src="{% static 'images/m1.jpg' %}" class="d-block w-100 banner-img" alt="Cleaning Service 1">
-      <!-- <img src="{% static 'images/new2.jpg' %}" class="d-block w-100 banner-img" alt="Cleaning Service 1"> -->
-
     </div>
     <div class="carousel-item">
       <img src="{% static 'images/new4.jpg' %}" class="d-block w-100 banner-img" alt="Cleaning Service 2">
@@ -163,14 +159,11 @@
 
 <!-- CATEGORY CARDS SECTION -->
 <section class="cat-section">
-  <!-- <div class="container"> -->
-  <div class="container-fluid"> 
+  <div class="container-fluid">
     <div class="cat-grid-wrap">
       {% for category in categories %}
       {% if category.services.count > 0 %}
         <a href="{% url 'all_services' %}?category={{ category.slug }}" class="cat-card">
-
-          <!-- DESKTOP: img-wrap -->
           <div class="img-wrap">
             {% with category.services.first as first_service %}
               {% if first_service and first_service.image %}
@@ -184,8 +177,6 @@
               {% endif %}
             {% endwith %}
           </div>
-
-          <!-- MOBILE: round image box -->
           <div class="mobile-img-box" style="display:none;">
             {% with category.services.first as first_service %}
               {% if first_service and first_service.image %}
@@ -197,13 +188,8 @@
               {% endif %}
             {% endwith %}
           </div>
-
-          <!-- DESKTOP: blue label -->
           <div class="cat-label">{{ category.name }}</div>
-
-          <!-- MOBILE: title below image -->
           <span class="mobile-title">{{ category.name }}</span>
-
         </a>
       {% endif %}
       {% endfor %}
@@ -218,7 +204,7 @@
       <h2>WHY CHOOSE US ?</h2>
       <div class="title-line"></div>
     </div>
-    <div class="row g-4">
+    <div class="row g-2">
       <div class="col-lg-4 col-md-6">
         <div class="why-card">
           <div class="why-icon"><i class="fas fa-star"></i></div>
