@@ -266,21 +266,20 @@ def checkout(request):
                     price=item.service.get_final_price()
                 )
 
-        # Customer location save karo
+        # ✅ FIX: GPS mile ya na mile — DeliveryLocation record HAMESHA banega
         dest_lat = request.POST.get('dest_latitude')
         dest_lng = request.POST.get('dest_longitude')
-        if dest_lat and dest_lng:
-            try:
-                DeliveryLocation.objects.update_or_create(
-                    order=order,
-                    defaults={
-                        'dest_latitude': float(dest_lat),
-                        'dest_longitude': float(dest_lng),
-                        'is_active': False,
-                    }
-                )
-            except:
-                pass
+        try:
+            defaults = {'is_active': False}
+            if dest_lat and dest_lng:
+                defaults['dest_latitude'] = float(dest_lat)
+                defaults['dest_longitude'] = float(dest_lng)
+            DeliveryLocation.objects.update_or_create(
+                order=order,
+                defaults=defaults
+            )
+        except:
+            pass
 
         # Cart clear karo
         cart.items.all().delete()
