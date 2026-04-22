@@ -1,0 +1,351 @@
+{% extends 'base.html' %}
+{% block title %}Track Order - Utkarsh Cleaning{% endblock %}
+{% block content %}
+{% load static %}
+<style>
+  .tracking-wrapper { max-width: 750px; margin: 40px auto; padding: 0 15px; }
+  .order-card { background: #fff; border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.10); overflow: hidden; margin-bottom: 20px; }
+  .order-header { background: linear-gradient(135deg, #1a7a45, #2ecc71); color: white; padding: 24px 28px; }
+  .order-header h4 { margin: 0; font-size: 1.3rem; font-weight: 700; }
+  .order-header p { margin: 4px 0 0; opacity: 0.85; font-size: 0.95rem; }
+  .order-body { padding: 28px; }
+  .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 24px; }
+  .info-item label { font-size: 0.78rem; color: #888; text-transform: uppercase; letter-spacing: 0.5px; }
+  .info-item p { margin: 4px 0 0; font-weight: 600; color: #222; font-size: 0.97rem; }
+  .status-badge { display: inline-block; padding: 5px 14px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; background: #e8f8ef; color: #1a7a45; }
+  .timeline { position: relative; padding-left: 28px; }
+  .timeline::before { content: ''; position: absolute; left: 8px; top: 6px; bottom: 6px; width: 2px; background: #e0e0e0; }
+  .timeline-item { position: relative; margin-bottom: 22px; }
+  .timeline-dot { position: absolute; left: -24px; top: 4px; width: 14px; height: 14px; border-radius: 50%; background: #1a7a45; border: 2px solid #fff; box-shadow: 0 0 0 2px #1a7a45; }
+  .timeline-item h6 { margin: 0; font-size: 0.97rem; font-weight: 700; color: #222; }
+  .timeline-item .msg { font-size: 0.88rem; color: #555; margin: 3px 0; }
+  .timeline-item .time { font-size: 0.78rem; color: #aaa; }
+  .map-card { background: #fff; border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.10); overflow: hidden; margin-bottom: 20px; }
+  .map-header { background: #1a7a45; color: white; padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; }
+  .map-header h5 { margin: 0; font-size: 1rem; font-weight: 700; }
+  .live-dot { width: 10px; height: 10px; border-radius: 50%; background: #2ecc71; display: inline-block; margin-right: 6px; animation: pulse 1.5s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.3)} }
+  #map { height: 360px; width: 100%; }
+  .map-status { padding: 10px 20px; background: #f8f9fa; font-size: 0.85rem; color: #666; }
+  .no-location { padding: 40px 20px; text-align: center; color: #aaa; }
+  .btn-row { display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap; }
+  .btn-back { padding: 10px 22px; border-radius: 8px; background: #1a7a45; color: white; text-decoration: none; font-weight: 600; font-size: 0.92rem; }
+  .btn-orders { padding: 10px 22px; border-radius: 8px; background: #f0f0f0; color: #333; text-decoration: none; font-weight: 600; font-size: 0.92rem; }
+
+  /* ETA Card - Rapido style */
+  .eta-card { display: none; background: #fff; border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.10); margin-bottom: 20px; overflow: hidden; }
+  .eta-header { background: linear-gradient(135deg, #1a7a45, #2ecc71); color: white; padding: 12px 20px; font-weight: 700; font-size: 0.95rem; }
+  .eta-body { padding: 16px 20px; }
+  .eta-route { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; font-size: 0.95rem; font-weight: 600; color: #222; flex-wrap: wrap; }
+  .eta-from { color: #1a7a45; }
+  .eta-arrow { color: #aaa; font-size: 1.2rem; }
+  .eta-to { color: #e74c3c; }
+  .eta-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+  .eta-stat { background: #f8fafc; border-radius: 10px; padding: 10px 12px; text-align: center; }
+  .eta-stat .val { font-size: 1.2rem; font-weight: 700; color: #1a7a45; }
+  .eta-stat .lbl { font-size: 0.72rem; color: #888; margin-top: 2px; }
+</style>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB8A9bzcobLYgrOeAa2wmGCw0pdLW13b0c"></script>
+
+<div class="tracking-wrapper">
+
+  <div class="order-card">
+    <div class="order-header">
+      <h4>🔍 Order Tracking</h4>
+      <p>{{ order.order_id }}</p>
+    </div>
+    <div class="order-body">
+      <div class="info-grid">
+        <div class="info-item">
+          <label>Customer</label>
+          <p>{{ order.name }}</p>
+        </div>
+        <div class="info-item">
+          <label>Current Status</label>
+          <p><span class="status-badge">{{ order.get_status_display }}</span></p>
+        </div>
+        <div class="info-item">
+          <label>Service Date</label>
+          <p>{{ order.service_date }}</p>
+        </div>
+        <div class="info-item">
+          <label>Service Time</label>
+          <p>{{ order.service_time }}</p>
+        </div>
+        <div class="info-item">
+          <label>Total Amount</label>
+          <p>₹{{ order.total }}</p>
+        </div>
+        <div class="info-item">
+          <label>Order Placed</label>
+          <p>{{ order.created_at|date:"d M Y" }}</p>
+        </div>
+      </div>
+
+      <hr>
+      <h6 style="font-weight:700;">📋 Tracking History</h6>
+      {% if tracking_history %}
+        <div class="timeline">
+          {% for track in tracking_history %}
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <h6>{{ track.get_status_display }}</h6>
+            {% if track.message %}<p class="msg">{{ track.message }}</p>{% endif %}
+            <span class="time">{{ track.created_at|date:"d M Y, h:i A" }}</span>
+          </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p style="color:#aaa;text-align:center;padding:16px 0;">⏳ Abhi koi update nahi hai.</p>
+      {% endif %}
+
+      <div class="btn-row">
+        <a href="{% url 'my_orders' %}" class="btn-back">📦 My Orders</a>
+        <a href="{% url 'home' %}" class="btn-orders">🏠 Home</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ETA Card (Rapido style) -->
+  <div class="eta-card" id="etaCard">
+    <div class="eta-header">🚴 Delivery Team Live Info</div>
+    <div class="eta-body">
+      <div class="eta-route">
+        <span class="eta-from" id="etaFrom">📍 Loading...</span>
+        <span class="eta-arrow">→</span>
+        <span class="eta-to" id="etaTo">🏠 Loading...</span>
+      </div>
+      <div class="eta-stats">
+        <div class="eta-stat">
+          <div class="val" id="etaDistance">--</div>
+          <div class="lbl">Distance</div>
+        </div>
+        <div class="eta-stat">
+          <div class="val" id="etaTime">--</div>
+          <div class="lbl">ETA</div>
+        </div>
+        <div class="eta-stat">
+          <div class="val" id="etaArrival">--</div>
+          <div class="lbl">Pahunchega</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="map-card">
+    <div class="map-header">
+      <h5><span class="live-dot"></span> Live Location</h5>
+      <small id="lastUpdate" style="opacity:0.8;">Checking...</small>
+    </div>
+    <div id="mapContainer">
+      <div class="no-location" id="noLocation">
+        📍 Abhi delivery team ne location share nahi ki hai
+      </div>
+      <div id="map" style="display:none;"></div>
+    </div>
+    <div class="map-status" id="mapStatus">Checking live location...</div>
+  </div>
+
+</div>
+
+<script>
+  let map = null;
+  let deliveryMarker = null;
+  let destinationMarker = null;
+  let routeLine = null;
+  const orderId = "{{ order.order_id|slice:'1:' }}";
+
+  let deliveryAreaName = null;
+  let destAreaName = null;
+  let lastDeliveryCoords = null;
+  let lastDestCoords = null;
+
+  function getBikeIcon() {
+    return {
+      url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
+          <circle cx="20" cy="20" r="18" fill="#1a7a45" stroke="white" stroke-width="2"/>
+          <text x="20" y="26" font-size="18" text-anchor="middle" fill="white">🧹</text>
+        </svg>
+      `),
+      scaledSize: new google.maps.Size(44, 44),
+      anchor: new google.maps.Point(22, 22),
+    };
+  }
+
+  function getDestinationIcon() {
+    return {
+      url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="44" viewBox="0 0 36 44">
+          <path d="M18 0 C8 0 0 8 0 18 C0 30 18 44 18 44 C18 44 36 30 36 18 C36 8 28 0 18 0Z" fill="#e74c3c" stroke="white" stroke-width="2"/>
+          <circle cx="18" cy="18" r="8" fill="white"/>
+          <text x="18" y="23" font-size="12" text-anchor="middle" fill="#e74c3c">🏠</text>
+        </svg>
+      `),
+      scaledSize: new google.maps.Size(36, 44),
+      anchor: new google.maps.Point(18, 44),
+    };
+  }
+
+  // Haversine distance formula
+  function calcDistance(lat1, lng1, lat2, lng2) {
+    const R = 6371;
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLng = (lng2 - lng1) * Math.PI / 180;
+    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+              Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+              Math.sin(dLng/2) * Math.sin(dLng/2);
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  }
+
+  // OpenStreetMap Nominatim — FREE reverse geocoding
+  async function getAreaName(lat, lng) {
+    try {
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`,
+        { headers: { 'Accept-Language': 'en' } }
+      );
+      const data = await res.json();
+      const addr = data.address;
+      return addr.suburb || addr.neighbourhood || addr.village ||
+             addr.town || addr.city_district || addr.city || addr.county || 'Unknown';
+    } catch {
+      return 'Unknown';
+    }
+  }
+
+  // ETA card update
+  async function updateETA(deliveryLat, deliveryLng, destLat, destLng) {
+    if (!destLat || !destLng) return;
+    document.getElementById('etaCard').style.display = 'block';
+
+    // Distance
+    const distKm = calcDistance(deliveryLat, deliveryLng, destLat, destLng);
+    const distText = distKm < 1 ? Math.round(distKm * 1000) + ' m' : distKm.toFixed(1) + ' km';
+
+    // ETA (avg 25 km/h city speed)
+    const etaMins = Math.max(1, Math.round((distKm / 25) * 60));
+    const etaText = etaMins + ' min';
+
+    // Arrival time
+    const arrival = new Date();
+    arrival.setMinutes(arrival.getMinutes() + etaMins);
+    const arrivalText = arrival.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+
+    document.getElementById('etaDistance').textContent = distText;
+    document.getElementById('etaTime').textContent = etaText;
+    document.getElementById('etaArrival').textContent = arrivalText;
+
+    // Area name — sirf tab fetch karo jab location significantly change ho
+    const deliveryMoved = !lastDeliveryCoords ||
+      Math.abs(lastDeliveryCoords[0] - deliveryLat) > 0.005 ||
+      Math.abs(lastDeliveryCoords[1] - deliveryLng) > 0.005;
+
+    const destChanged = !lastDestCoords || !destAreaName;
+
+    if (deliveryMoved) {
+      lastDeliveryCoords = [deliveryLat, deliveryLng];
+      deliveryAreaName = await getAreaName(deliveryLat, deliveryLng);
+    }
+
+    if (destChanged) {
+      lastDestCoords = [destLat, destLng];
+      await new Promise(r => setTimeout(r, 1100)); // Rate limit respect
+      destAreaName = await getAreaName(destLat, destLng);
+    }
+
+    document.getElementById('etaFrom').textContent = '📍 ' + (deliveryAreaName || '...');
+    document.getElementById('etaTo').textContent = '🏠 ' + (destAreaName || '...');
+  }
+
+  function drawLine(deliveryLat, deliveryLng, destLat, destLng) {
+    if (routeLine) routeLine.setMap(null);
+    if (!destLat || !destLng) return;
+
+    routeLine = new google.maps.Polyline({
+      path: [
+        { lat: deliveryLat, lng: deliveryLng },
+        { lat: destLat, lng: destLng }
+      ],
+      geodesic: true,
+      strokeColor: '#1a7a45',
+      strokeOpacity: 0.9,
+      strokeWeight: 5,
+      map: map
+    });
+  }
+
+  function initMap(lat, lng, destLat, destLng) {
+    if (!map) {
+      document.getElementById('noLocation').style.display = 'none';
+      document.getElementById('map').style.display = 'block';
+
+      map = new google.maps.Map(document.getElementById('map'), {
+        center: { lat: lat, lng: lng },
+        zoom: 13,
+        mapTypeId: 'roadmap',
+        styles: [{ featureType: "poi", elementType: "labels", stylers: [{ visibility: "off" }] }]
+      });
+
+      deliveryMarker = new google.maps.Marker({
+        position: { lat: lat, lng: lng },
+        map: map,
+        title: 'Utkarsh Cleaning Team',
+        icon: getBikeIcon(),
+        zIndex: 999
+      });
+
+      if (destLat && destLng) {
+        destinationMarker = new google.maps.Marker({
+          position: { lat: destLat, lng: destLng },
+          map: map,
+          title: 'Customer Location',
+          icon: getDestinationIcon(),
+          zIndex: 998
+        });
+      }
+
+      drawLine(lat, lng, destLat, destLng);
+
+      if (destLat && destLng) {
+        const bounds = new google.maps.LatLngBounds();
+        bounds.extend({ lat: lat, lng: lng });
+        bounds.extend({ lat: destLat, lng: destLng });
+        map.fitBounds(bounds, { padding: 80 });
+        google.maps.event.addListenerOnce(map, 'bounds_changed', function() {
+          if (map.getZoom() > 16) map.setZoom(16);
+        });
+      }
+
+    } else {
+      deliveryMarker.setPosition({ lat: lat, lng: lng });
+      const destPos = destinationMarker ? destinationMarker.getPosition() : null;
+      if (destPos) drawLine(lat, lng, destPos.lat(), destPos.lng());
+    }
+
+    updateETA(lat, lng, destLat, destLng);
+  }
+
+  function checkLocation() {
+    fetch(`/order/${orderId}/location/`)
+      .then(r => r.json())
+      .then(data => {
+        if (data.active && data.lat && data.lng) {
+          initMap(data.lat, data.lng, data.dest_lat, data.dest_lng);
+          document.getElementById('mapStatus').innerHTML = '🟢 Live tracking active';
+          document.getElementById('lastUpdate').textContent = 'Updated: ' + data.updated;
+        } else {
+          document.getElementById('mapStatus').innerHTML = '⏳ Location share hone ka wait kar rahe hain...';
+          document.getElementById('lastUpdate').textContent = '';
+        }
+      })
+      .catch(() => {
+        document.getElementById('mapStatus').innerHTML = '⚠️ Connection error, retry ho raha hai...';
+      });
+  }
+
+  checkLocation();
+  setInterval(checkLocation, 5000);
+</script>
+{% endblock %}

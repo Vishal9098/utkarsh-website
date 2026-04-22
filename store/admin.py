@@ -21,3 +21,25 @@ class OrderAdmin(admin.ModelAdmin):
     list_editable = ['invoice_approved']
     list_filter = ['status', 'invoice_approved']
     search_fields = ['order_id', 'name', 'phone']
+
+
+from django.contrib import admin
+from .models import Order, OrderTracking
+
+class OrderTrackingInline(admin.TabularInline):
+    model = OrderTracking
+    extra = 1
+    fields = ['status', 'message', 'updated_by']
+
+# Agar Order pehle se registered hai to sirf inline add karo
+# Warna ye pura block use karo:
+@admin.register(OrderTracking)
+class OrderTrackingAdmin(admin.ModelAdmin):
+    list_display = ['order', 'status', 'created_at']
+
+
+from .models import DeliveryLocation
+
+@admin.register(DeliveryLocation)
+class DeliveryLocationAdmin(admin.ModelAdmin):
+    list_display = ['order', 'latitude', 'longitude', 'dest_latitude', 'dest_longitude', 'is_active', 'updated_at']

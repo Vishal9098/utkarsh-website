@@ -27,6 +27,10 @@
 
     <form method="POST" id="checkout-form">{% csrf_token %}
 
+    <!-- ✅ Customer GPS Location (Hidden Fields) -->
+    <input type="hidden" name="dest_latitude" id="dest_latitude">
+    <input type="hidden" name="dest_longitude" id="dest_longitude">
+
     <div class="row g-4">
 
       <!-- LEFT COLUMN -->
@@ -176,6 +180,11 @@
             <small class="text-muted d-block" id="booking-time-display"></small>
           </div>
 
+          <!-- ✅ GPS Status Badge -->
+          <div id="gps-status" class="mb-2 text-center" style="font-size:12px; color:#888;">
+            <i class="fas fa-map-marker-alt me-1"></i><span id="gps-text">📍 Location detect ho rahi hai...</span>
+          </div>
+
           <button type="submit" id="place-order-btn"
                   class="btn btn-warning btn-lg w-100 fw-bold"
                   style="border-radius:30px; font-size:18px;" disabled>
@@ -244,6 +253,24 @@ document.getElementById('checkout-form').addEventListener('submit', function(e) 
 });
 
 updateSubmitState();
+
+// ✅ Customer GPS Location automatically capture
+if (navigator.geolocation) {
+  navigator.geolocation.getCurrentPosition(
+    function(pos) {
+      document.getElementById('dest_latitude').value  = pos.coords.latitude;
+      document.getElementById('dest_longitude').value = pos.coords.longitude;
+      document.getElementById('gps-text').textContent = '✅ Location save ho gayi!';
+      document.getElementById('gps-text').style.color = 'green';
+    },
+    function(err) {
+      document.getElementById('gps-text').textContent = '⚠️ Location nahi mili (order phir bhi hoga)';
+      document.getElementById('gps-text').style.color = '#f59e0b';
+    }
+  );
+} else {
+  document.getElementById('gps-text').textContent = '⚠️ Browser location support nahi karta';
+}
 </script>
 
 {% endblock %}

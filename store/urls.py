@@ -25,5 +25,12 @@ urlpatterns = [
     # path('invoice/<int:order_id>/', views.download_invoice, name='download_invoice'),
     path('invoice/<str:order_id>/', views.download_invoice, name='download_invoice'),
     path('dashboard/', views.dashboard, name='dashboard'),
+    # existing urlpatterns mein add karo
+    path('track/', views.track_order_public, name='track_order'),
+    path('order/<str:order_id>/tracking/', views.my_order_tracking, name='order_tracking'),
+    path('delivery/share/<str:order_id>/', views.delivery_share_link, name='delivery_share'),
+    path('delivery/update/<str:token>/', views.delivery_boy_page, name='delivery_boy_page'),
+    path('delivery/location/<str:token>/', views.update_location_api, name='update_location'),
+    path('order/<str:order_id>/location/', views.get_delivery_location, name='get_delivery_location'),
    
 ]

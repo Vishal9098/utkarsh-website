@@ -81,7 +81,6 @@
 }
 .contact-note i { color: var(--gold); margin-right: 6px; }
 
-/* ✅ Invoice locked box */
 .invoice-locked-box {
   margin: 0 28px 20px;
   background: #f1f3f5;
@@ -185,32 +184,34 @@
     </div>
 
     <div class="contact-note">
-  <i class="fas fa-phone-alt"></i>
-  We will contact you soon on your phone <strong>{{ order.phone }}</strong> to schedule the service.
-</div>
+      <i class="fas fa-phone-alt"></i>
+      We will contact you soon on your phone <strong>{{ order.phone }}</strong> to schedule the service.
+    </div>
 
     <div class="success-actions">
 
       {% if order.invoice_approved %}
-        <!-- ✅ Admin ne approve kiya — download allow -->
         <a href="{% url 'download_invoice' order.order_id %}" class="btn-download-invoice">
           <i class="fas fa-file-invoice-dollar"></i>
           Download Invoice (PDF)
         </a>
       {% else %}
-        <!-- 🔒 Admin ne approve nahi kiya — locked box -->
         <div class="invoice-locked-box">
           <div class="lock-icon"><i class="fas fa-lock"></i></div>
           <div class="lock-text">
             <strong>Invoice is not available yet</strong>
-            <!-- <small>Admin ke approve karne ke baad aap invoice download kar payenge. My Orders mein check karte rahein.</small> -->
-             <small>Invoice will be available after service completion
-Once your service is completed, you will be able to download the invoice. Please keep checking in My Orders.</small>
+            <small>Invoice will be available after service completion.
+            Once your service is completed, you will be able to download the invoice. Please keep checking in My Orders.</small>
           </div>
         </div>
       {% endif %}
 
+      <!-- ✅ TRACK ORDER BUTTON ADDED HERE -->
       <div class="btn-row">
+        <a href="{% url 'order_tracking' order.order_id %}" class="btn-my-orders"
+           style="background:#1a7a45;">
+          <i class="fas fa-map-marker-alt"></i> Track Order
+        </a>
         <a href="{% url 'my_orders' %}" class="btn-my-orders">
           <i class="fas fa-list-alt"></i> My Orders
         </a>

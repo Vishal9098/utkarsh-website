@@ -208,3 +208,53 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return self.user.username
+    
+
+# models.py ke end mein add karo (Order class ke neeche)
+
+class OrderTracking(models.Model):
+    STATUS_CHOICES = [
+        ('pending', '⏳ Pending'),
+        ('confirmed', '✅ Confirmed'),
+        ('in_progress', '🔧 In Progress'),
+        ('completed', '🎉 Completed'),
+        ('cancelled', '❌ Cancelled'),
+    ]
+    
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='tracking_history')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES)
+    message = models.CharField(max_length=300, blank=True, 
+                                help_text="e.g. Team raste mein hai")
+    updated_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.order.order_id} → {self.status}"
+    
+
+
+
+
+
+class DeliveryLocation(models.Model):
+    order = models.OneToOneField(Order, on_delete=models.CASCADE, related_name='delivery_location')
+    latitude = models.FloatField(null=True, blank=True)
+    longitude = models.FloatField(null=True, blank=True)
+    share_token = models.CharField(max_length=64, unique=True, blank=True)
+    is_active = models.BooleanField(default=False)
+    updated_at = models.DateTimeField(auto_now=True)
+    dest_latitude = models.FloatField(null=True, blank=True)
+    dest_longitude = models.FloatField(null=True, blank=True)
+
+
+    def save(self, *args, **kwargs):
+        if not self.share_token:
+            import secrets
+            self.share_token = secrets.token_urlsafe(32)
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.order.order_id} location"

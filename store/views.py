@@ -266,6 +266,22 @@ def checkout(request):
                     price=item.service.get_final_price()
                 )
 
+        # Customer location save karo
+        dest_lat = request.POST.get('dest_latitude')
+        dest_lng = request.POST.get('dest_longitude')
+        if dest_lat and dest_lng:
+            try:
+                DeliveryLocation.objects.update_or_create(
+                    order=order,
+                    defaults={
+                        'dest_latitude': float(dest_lat),
+                        'dest_longitude': float(dest_lng),
+                        'is_active': False,
+                    }
+                )
+            except:
+                pass
+
         # Cart clear karo
         cart.items.all().delete()
         if 'coupon' in request.session:
@@ -680,7 +696,95 @@ def dashboard_order_detail(request, order_id):
 @login_required
 def dashboard(request):
     orders = Order.objects.all().order_by('-created_at')[:10]
-
     return render(request, 'dashboard/index.html', {
         'orders': orders
     })
+
+
+def track_order_public(request):
+    """Bina login ke order track karo — sirf order_id se"""
+    order = None
+    tracking_history = []
+    error = None
+
+    if request.method == 'POST':
+        order_id = request.POST.get('order_id', '').strip().upper()
+        if not order_id.startswith('#'):
+            order_id = '#' + order_id
+
+        try:
+            order = Order.objects.get(order_id=order_id)
+            tracking_history = order.tracking_history.all()
+        except Order.DoesNotExist:
+            error = "❌ Invalid Order ID. Please check and try again."
+
+    return render(request, 'store/track_order.html', {
+        'order': order,
+        'tracking_history': tracking_history,
+        'error': error,
+    })
+
+@login_required
+def my_order_tracking(request, order_id):
+    """Logged-in user apna order track kare"""
+    if not order_id.startswith('#'):
+        order_id = '#' + order_id
+    order = get_object_or_404(Order, order_id=order_id, user=request.user)
+    tracking_history = order.tracking_history.all()
+    return render(request, 'store/order_tracking.html', {
+        'order': order,
+        'tracking_history': tracking_history,
+    })
+
+
+import secrets
+from django.views.decorators.csrf import csrf_exempt
+
+def delivery_share_link(request, order_id):
+    """Admin ya staff delivery boy ko link bhejega"""
+    if not order_id.startswith('#'):
+        order_id = '#' + order_id
+    order = get_object_or_404(Order, order_id=order_id)
+    loc, _ = DeliveryLocation.objects.get_or_create(order=order)
+    loc.is_active = True
+    loc.save()
+    share_url = request.build_absolute_uri(f'/delivery/update/{loc.share_token}/')
+    return JsonResponse({'share_url': share_url, 'token': loc.share_token})
+
+def delivery_boy_page(request, token):
+    """Delivery boy yahan apni location share karega"""
+    loc = get_object_or_404(DeliveryLocation, share_token=token, is_active=True)
+    return render(request, 'store/delivery_boy.html', {'token': token, 'order': loc.order})
+
+@csrf_exempt
+def update_location_api(request, token):
+    """Delivery boy ka GPS yahan aayega"""
+    if request.method == 'POST':
+        loc = get_object_or_404(DeliveryLocation, share_token=token, is_active=True)
+        data = json.loads(request.body)
+        loc.latitude = data.get('lat')
+        loc.longitude = data.get('lng')
+        loc.save()
+        return JsonResponse({'status': 'ok'})
+    return JsonResponse({'status': 'error'}, status=400)
+
+def get_delivery_location(request, order_id):
+    if not order_id.startswith('#'):
+        order_id = '#' + order_id
+    order = get_object_or_404(Order, order_id=order_id, user=request.user)
+    try:
+        loc = order.delivery_location
+        if loc.latitude and loc.longitude:
+            dest_lat = loc.dest_latitude if loc.dest_latitude else loc.latitude
+            dest_lng = loc.dest_longitude if loc.dest_longitude else loc.longitude
+            return JsonResponse({
+                'lat': loc.latitude,
+                'lng': loc.longitude,
+                'active': loc.is_active,
+                'updated': loc.updated_at.strftime('%H:%M:%S'),
+                'dest_lat': dest_lat,
+                'dest_lng': dest_lng,
+            })
+    except:
+        pass
+    return JsonResponse({'active': False})
