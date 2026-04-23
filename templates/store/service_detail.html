@@ -1,5 +1,32 @@
 {% extends 'base.html' %}
 {% block title %}{{ service.name }} - Utkarsh Cleaning{% endblock %}
+
+{% block extra_css %}
+<style>
+@media (max-width: 991.98px) {
+  #qty-minus, #qty-plus {
+    width: 44px !important;
+    height: 44px !important;
+    font-size: 22px !important;
+    background: var(--primary) !important;
+    color: #fff !important;
+    border-radius: 0 !important;
+  }
+  #qty-input { font-size: 18px !important; width: 48px !important; }
+  .qty-wrapper { border: 2px solid var(--primary) !important; border-radius: 14px !important; overflow: hidden; }
+  .live-total-box { font-size: 13px !important; }
+  .live-total-box .total-amount { font-size: 18px !important; }
+  #cart-form, #booknow-form { flex: 1; }
+  #cart-form button, #booknow-form button {
+    width: 100%;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    font-size: 15px !important;
+  }
+}
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="breadcrumb-section">
   <div class="container">
@@ -29,6 +56,7 @@
         </div>
         {% endif %}
       </div>
+
       <div class="col-lg-6">
         <span class="badge bg-primary mb-2">{{ service.category.name }}</span>
         <h1 style="font-family:'Libre Baskerville',serif;font-size:32px;font-weight:700;">{{ service.name }}</h1>
@@ -51,6 +79,8 @@
 
         {% with slug=service.category.slug %}
         <div class="my-4">
+
+          <!-- Quantity Selector -->
           <div class="d-flex align-items-center gap-2 mb-3">
             {% if slug == 'sofa-cleaning' %}
               <span class="fw-bold" style="color:var(--primary);">(Per seat)</span>
@@ -59,16 +89,16 @@
             {% else %}
               <span class="fw-bold" style="color:var(--primary);">Quantity:</span>
             {% endif %}
-            <div class="d-flex align-items-center border rounded-pill overflow-hidden" style="width:130px;">
+            <div class="qty-wrapper d-flex align-items-center border rounded-pill overflow-hidden" style="width:140px;">
               <button type="button" id="qty-minus" class="btn btn-light border-0 px-3 py-2" style="font-size:18px;font-weight:700;">−</button>
               <input type="number" id="qty-input" value="1" min="1" max="10" readonly
-                class="form-control border-0 text-center fw-bold p-0" style="width:40px;font-size:16px;box-shadow:none;">
+                class="form-control border-0 text-center fw-bold p-0" style="width:44px;font-size:16px;box-shadow:none;">
               <button type="button" id="qty-plus" class="btn btn-light border-0 px-3 py-2" style="font-size:18px;font-weight:700;">+</button>
             </div>
           </div>
 
           <!-- Live Total Amount Box -->
-          <div class="mb-3 p-3 rounded-3" style="background:#f0f7ff;border:1.5px solid #c7d7f5;">
+          <div class="live-total-box mb-3 p-3 rounded-3" style="background:#f0f7ff;border:1.5px solid #c7d7f5;">
             <div class="d-flex justify-content-between align-items-center mb-1">
               <span class="text-muted" style="font-size:14px;">Unit Price</span>
               <span style="font-size:14px;">₹{{ service.get_final_price }}</span>
@@ -79,16 +109,17 @@
             </div>
             <div class="d-flex justify-content-between align-items-center mb-1">
               <span class="text-muted" style="font-size:14px;">GST (18%)</span>
-              <span id="summary-gst" style="font-size:14px; color:#6c757d;">₹0.00</span>
+              <span id="summary-gst" style="font-size:14px;color:#6c757d;">₹0.00</span>
             </div>
             <hr class="my-2">
             <div class="d-flex justify-content-between align-items-center">
               <span class="fw-bold" style="font-size:16px;">Total Amount</span>
-              <span id="summary-total" class="fw-bold" style="font-size:20px;color:var(--primary);">₹0.00</span>
+              <span id="summary-total" class="fw-bold total-amount" style="font-size:20px;color:var(--primary);">₹0.00</span>
             </div>
           </div>
 
-          <div class="d-flex gap-3">
+          <!-- Add to Cart + Book Now Buttons -->
+          <div class="d-flex gap-3 mb-4">
             {% if slug %}
             <form method="GET" action="{% url 'add_to_cart' service.id %}" id="cart-form">
               <input type="hidden" name="quantity" id="cart-qty" value="1">
@@ -111,6 +142,15 @@
             </a>
             {% endif %}
           </div>
+
+          <!-- Trust Badges — Buttons ke BILKUL NEECHE -->
+          <div class="row g-3 mt-1">
+            <div class="col-6"><div class="d-flex align-items-center gap-2"><i class="fas fa-shield-check text-success"></i><small>100% Guaranteed</small></div></div>
+            <div class="col-6"><div class="d-flex align-items-center gap-2"><i class="fas fa-leaf text-success"></i><small>Eco-friendly Products</small></div></div>
+            <div class="col-6"><div class="d-flex align-items-center gap-2"><i class="fas fa-user-check text-success"></i><small>Trained Professionals</small></div></div>
+            <div class="col-6"><div class="d-flex align-items-center gap-2"><i class="fas fa-phone text-success"></i><small>24/7 Support</small></div></div>
+          </div>
+
         </div>
 
         <script>
@@ -131,7 +171,6 @@
             const subtotal = unitPrice * qty;
             const gst      = subtotal * GST_RATE;
             const total    = subtotal + gst;
-
             summaryQty.textContent = qty;
             summaryGst.textContent = '₹' + gst.toFixed(2);
             summaryTot.textContent = '₹' + total.toFixed(2);
@@ -151,13 +190,6 @@
           });
         </script>
         {% endwith %}
-
-        <div class="row g-3 mt-2">
-          <div class="col-6"><div class="d-flex align-items-center gap-2"><i class="fas fa-shield-check text-success"></i><small>100% Guaranteed</small></div></div>
-          <div class="col-6"><div class="d-flex align-items-center gap-2"><i class="fas fa-leaf text-success"></i><small>Eco-friendly Products</small></div></div>
-          <div class="col-6"><div class="d-flex align-items-center gap-2"><i class="fas fa-user-check text-success"></i><small>Trained Professionals</small></div></div>
-          <div class="col-6"><div class="d-flex align-items-center gap-2"><i class="fas fa-phone text-success"></i><small>24/7 Support</small></div></div>
-        </div>
       </div>
     </div>
 
