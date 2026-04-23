@@ -18,22 +18,8 @@
   --text: #333;
   --border: #e0e6ef;
 }
-
-
-
-* {
-  font-family: "Libre Baskerville", serif !important;
-}
-
-.fa-solid, .fas {
-  font-family: "Font Awesome 6 Free" !important;
-  font-weight: 900 !important;
-}
-
-.fab {
-  font-family: "Font Awesome 6 Brands" !important;
-  font-weight: 400 !important;
-}
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body { font-family: "Libre Baskerville", serif; }
 
 /* ═══════════════════════════════
    TOP BAR
@@ -131,9 +117,33 @@
 /* ═══════════════════════════════
    COMMON
 ═══════════════════════════════ */
-.hero-section { background: linear-gradient(135deg, var(--primary) 0%, #0d4a8a 100%); color: #fff; padding: 80px 0; position: relative; overflow: hidden; }
-.hero-section::before { content: ''; position: absolute; right: -100px; top: -100px; width: 500px; height: 500px; background: rgba(255,255,255,.05); border-radius: 50%; }
-.service-card { border: 1px solid var(--border); border-radius: 15px; overflow: hidden; transition: all .3s; cursor: pointer; background: #fff; }
+.hero-section {
+  background: linear-gradient(135deg, var(--primary) 0%, #0d4a8a 100%);
+  color: #fff;
+  padding: 80px 0;
+  position: relative;
+  overflow: hidden;
+  /* FIX: Ensure no margin-bottom causing gap */
+  margin-bottom: 0;
+}
+.hero-section::before {
+  content: '';
+  position: absolute;
+  right: -100px; top: -100px;
+  width: 500px; height: 500px;
+  background: rgba(255,255,255,.05);
+  border-radius: 50%;
+}
+.service-card {
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  overflow: hidden;
+  transition: all .3s;
+  cursor: pointer;
+  background: #fff;
+  /* FIX: Remove any default margin causing gap */
+  margin-bottom: 0;
+}
 .service-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(26,95,168,.15); border-color: var(--primary); }
 .service-card img { width: 100%; height: 200px; object-fit: cover; }
 .service-card .card-body { padding: 15px; }
@@ -179,28 +189,25 @@
 .float-call { background: var(--primary); }
 
 /* ═══════════════════════════════
-   FOOTER — COMPLETELY NEW DESIGN
+   FOOTER
 ═══════════════════════════════ */
 .footer-main {
   font-family: 'Poppins', sans-serif;
   background: #0a0f1e;
 }
 
-/* Top wave divider */
 .footer-wave {
   background: #f8f9fc;
   line-height: 0;
 }
 .footer-wave svg { display: block; width: 100%; }
 
-/* Upper section */
 .footer-upper {
   background: linear-gradient(180deg, #0d1526 0%, #0a0f1e 100%);
   padding: 60px 0 40px;
   border-bottom: 1px solid rgba(255,255,255,0.06);
 }
 
-/* Brand column */
 .footer-brand img {
   height: 56px;
   margin-bottom: 18px;
@@ -251,7 +258,6 @@
 .footer-social-new a.yt:hover { background: #ff0000; border-color: transparent; }
 .footer-social-new a.li:hover { background: #0077b5; border-color: transparent; }
 
-/* Footer columns */
 .footer-col-title {
   color: #fff;
   font-size: 11px;
@@ -284,7 +290,6 @@
 .footer-link i { color: var(--primary); font-size: 11px; width: 12px; flex-shrink: 0; }
 .footer-link:hover { color: #fff; padding-left: 4px; }
 
-/* Contact items */
 .footer-contact-item {
   display: flex;
   align-items: flex-start;
@@ -306,7 +311,6 @@
 .footer-contact-item a { color: #8a95a8; text-decoration: none; transition: color .2s; }
 .footer-contact-item a:hover { color: #fff; }
 
-/* App download */
 .footer-app-box {
   margin-top: 20px;
   background: rgba(255,255,255,0.03);
@@ -331,7 +335,6 @@
 .footer-app-btns-new a span { font-size: 10px; color: #888; display: block; }
 .footer-app-btns-new a:hover i, .footer-app-btns-new a:hover span { color: #fff; }
 
-/* Services strip */
 .footer-services-strip {
   background: #060b14;
   padding: 36px 0 28px;
@@ -387,7 +390,6 @@
   transform: translateY(-2px);
 }
 
-/* Bottom bar */
 .footer-bottom {
   background: #040810;
   padding: 16px 0;
@@ -419,7 +421,7 @@
 .footer-bottom-links a:hover { color: #fff; }
 
 /* ═══════════════════════════════
-   MOBILE BOTTOM NAV — PREMIUM
+   MOBILE BOTTOM NAV
 ═══════════════════════════════ */
 .mobile-bottom-nav {
   display: none;
@@ -472,23 +474,234 @@
   box-shadow: 0 2px 6px rgba(231,76,60,.4);
 }
 
-/* ═══════════════════════════════
-   RESPONSIVE
-═══════════════════════════════ */
-@media(max-width: 992px) {
-  .floating-buttons { bottom: 80px; }
-  body { padding-bottom: 65px; }
-  .mobile-bottom-nav { display: flex; }
-  .mobile-phone-strip { display: block; }
-}
+/* ═══════════════════════════════════════════════
+   ✅ MOBILE FIXES — ALL ISSUES RESOLVED
+═══════════════════════════════════════════════ */
+
+/* --- Fix 1: Hero section mobile padding --- */
 @media(max-width: 768px) {
-  .hero-section { padding: 50px 0; }
-  .hero-section h1 { font-size: 28px !important; }
-  .section-title h2 { font-size: 24px; }
-  .footer-upper .row > div { margin-bottom: 32px; }
-  .footer-bottom .container { flex-direction: column; text-align: center; }
-  .footer-bottom-links { justify-content: center; }
-  .footer-services-grid-new a { font-size: 11px; padding: 5px 11px; }
+  .hero-section {
+    padding: 36px 0 32px;
+    /* Remove any bottom margin that causes white gap */
+    margin-bottom: 0 !important;
+  }
+  /* Fix: Any section right after hero should have no extra top padding/margin */
+  .hero-section + section,
+  .hero-section + div {
+    margin-top: 0 !important;
+    padding-top: 28px !important;
+  }
+}
+
+/* --- Fix 2: Section title on mobile --- */
+@media(max-width: 768px) {
+  .section-title {
+    margin-bottom: 28px;
+  }
+  .section-title h2 {
+    font-size: 22px;
+    line-height: 1.3;
+  }
+  .section-title p {
+    font-size: 13px;
+  }
+}
+
+/* --- Fix 3: Service cards — proper 2-column grid on mobile --- */
+@media(max-width: 576px) {
+  /* Make sure Bootstrap cols work tightly */
+  .service-card {
+    border-radius: 12px;
+    margin-bottom: 0;
+  }
+  .service-card img {
+    height: 140px;
+  }
+  .service-card .card-body {
+    padding: 10px 12px 12px;
+  }
+  .service-card .card-title {
+    font-size: 13px;
+    line-height: 1.3;
+    margin-bottom: 4px;
+  }
+  .service-card .price {
+    font-size: 15px;
+  }
+  .service-card .price-old {
+    font-size: 11px;
+  }
+}
+
+/* --- Fix 4: Why section on mobile --- */
+@media(max-width: 768px) {
+  .why-section {
+    padding: 40px 0;
+  }
+  .why-card {
+    padding: 20px 15px;
+  }
+  .why-icon {
+    width: 58px; height: 58px;
+    margin-bottom: 14px;
+  }
+  .why-icon i { font-size: 22px; }
+}
+
+/* --- Fix 5: Footer upper — NO extra blank gap between columns --- */
+@media(max-width: 992px) {
+  .footer-upper {
+    padding: 36px 0 24px;
+  }
+  /* Remove the large g-5 gap Bootstrap adds on mobile */
+  .footer-upper .row {
+    --bs-gutter-y: 0;
+  }
+  .footer-upper .row > div {
+    margin-bottom: 28px;
+    padding-bottom: 0;
+  }
+  .footer-upper .row > div:last-child {
+    margin-bottom: 0;
+  }
+}
+
+@media(max-width: 768px) {
+  /* Footer brand compact on mobile */
+  .footer-brand p {
+    font-size: 12px;
+    max-width: 100%;
+    line-height: 1.65;
+  }
+  .footer-brand .badge-row span {
+    font-size: 9px;
+    padding: 3px 8px;
+  }
+
+  /* Footer quick links — 2 columns on mobile */
+  .footer-links-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px 12px;
+  }
+  .footer-link {
+    font-size: 12px;
+    margin-bottom: 8px;
+  }
+
+  /* Footer contact compact */
+  .footer-contact-item {
+    font-size: 12px;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .footer-contact-item .fci-icon {
+    width: 28px; height: 28px;
+  }
+  .footer-contact-item .fci-icon i {
+    font-size: 11px;
+  }
+
+  /* Footer col title smaller on mobile */
+  .footer-col-title {
+    font-size: 10px;
+    margin-bottom: 14px;
+  }
+
+  /* App box on mobile */
+  .footer-app-box {
+    margin-top: 12px;
+    padding: 12px;
+  }
+
+  /* Services strip on mobile */
+  .footer-services-strip {
+    padding: 24px 0 20px;
+  }
+  .footer-services-grid-new a {
+    font-size: 10.5px;
+    padding: 5px 10px;
+  }
+
+  /* Footer bottom stacked */
+  .footer-bottom .container {
+    flex-direction: column;
+    text-align: center;
+    gap: 8px;
+  }
+  .footer-bottom-links {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .footer-bottom .copy {
+    font-size: 11px;
+    line-height: 1.6;
+  }
+}
+
+/* --- Fix 6: Floating buttons — above mobile nav bar --- */
+@media(max-width: 992px) {
+  .floating-buttons {
+    bottom: 74px; /* Above 62px mobile nav + margin */
+    left: 12px;
+    gap: 8px;
+  }
+  .float-btn {
+    width: 44px; height: 44px;
+    font-size: 19px;
+  }
+  body {
+    padding-bottom: 62px;
+  }
+  .mobile-bottom-nav {
+    display: flex;
+  }
+  .mobile-phone-strip {
+    display: block;
+  }
+}
+
+/* --- Fix 7: Messages container on mobile --- */
+@media(max-width: 576px) {
+  .messages-container {
+    width: calc(100% - 30px);
+    right: 15px;
+    left: 15px;
+    top: 70px;
+  }
+}
+
+/* --- Fix 8: Navbar on mobile --- */
+@media(max-width: 992px) {
+  .navbar {
+    padding: 8px 0;
+  }
+  .navbar-brand img {
+    height: 44px;
+  }
+  /* Collapsed menu — proper padding */
+  .navbar-collapse {
+    padding: 12px 0 8px;
+    border-top: 1px solid #f0f4fb;
+    margin-top: 8px;
+  }
+  .navbar-collapse .nav-link {
+    padding: 10px 6px !important;
+    border-bottom: 1px solid #f5f7fa;
+    font-size: 14px;
+  }
+  .navbar-collapse .d-flex {
+    flex-direction: column;
+    gap: 10px !important;
+    margin-top: 10px;
+  }
+  .navbar-collapse form {
+    margin-right: 0 !important;
+  }
+  .navbar-collapse .input-group input {
+    font-size: 13px;
+  }
 }
 
 {% block extra_css %}{% endblock %}
@@ -507,7 +720,7 @@
 </div>
 {% endif %}
 
-<!-- TOP BAR — Desktop -->
+<!-- TOP BAR — Desktop only -->
 <div class="top-bar d-none d-md-block">
   <div class="container d-flex justify-content-between align-items-center">
     <div class="top-bar-left">
@@ -588,7 +801,7 @@
 {% block content %}{% endblock %}
 
 <!-- ═══════════════════════════════════════════
-     FOOTER — NEW PREMIUM DESIGN
+     FOOTER
 ═══════════════════════════════════════════ -->
 <footer class="footer-main">
 
@@ -602,13 +815,13 @@
   <!-- Upper section -->
   <div class="footer-upper">
     <div class="container">
-      <div class="row g-5">
+      <div class="row g-4">
 
         <!-- Brand -->
-        <div class="col-lg-4 col-md-6">
+        <div class="col-lg-4 col-md-6 col-12">
           <div class="footer-brand">
             <img src="{% static 'images/logo.png' %}" alt="Utkarsh Cleaning">
-            <p>Utkarsh Home Services is a leading Home & Office Services Platform in India, providing reliable and professional cleaning solutions across Madhya Pradesh.</p>
+            <p>Utkarsh Home Services is a leading Home &amp; Office Services Platform in India, providing reliable and professional cleaning solutions across Madhya Pradesh.</p>
             <div class="badge-row">
               <span>✓ 100% Safe</span>
               <span>✓ Verified Staff</span>
@@ -626,19 +839,22 @@
         <!-- Quick Links -->
         <div class="col-lg-2 col-md-6 col-6">
           <div class="footer-col-title">Quick Links</div>
-          <a href="{% url 'home' %}" class="footer-link"><i class="fas fa-chevron-right"></i>Home</a>
-          <a href="{% url 'all_services' %}" class="footer-link"><i class="fas fa-chevron-right"></i>All Services</a>
-          <a href="{% url 'gallery' %}" class="footer-link"><i class="fas fa-chevron-right"></i>Gallery</a>
-          <a href="{% url 'blog_list' %}" class="footer-link"><i class="fas fa-chevron-right"></i>Blog</a>
-          <a href="{% url 'contact' %}" class="footer-link"><i class="fas fa-chevron-right"></i>Contact Us</a>
-          <a href="#" class="footer-link"><i class="fas fa-chevron-right"></i>About Us</a>
-          <a href="#" class="footer-link"><i class="fas fa-chevron-right"></i>FAQ</a>
-          <a href="#" class="footer-link"><i class="fas fa-chevron-right"></i>Privacy Policy</a>
-          <a href="#" class="footer-link"><i class="fas fa-chevron-right"></i>Terms & Conditions</a>
+          <!-- Wrap in div for 2-col grid on mobile -->
+          <div class="footer-links-grid">
+            <a href="{% url 'home' %}" class="footer-link"><i class="fas fa-chevron-right"></i>Home</a>
+            <a href="{% url 'all_services' %}" class="footer-link"><i class="fas fa-chevron-right"></i>All Services</a>
+            <a href="{% url 'gallery' %}" class="footer-link"><i class="fas fa-chevron-right"></i>Gallery</a>
+            <a href="{% url 'blog_list' %}" class="footer-link"><i class="fas fa-chevron-right"></i>Blog</a>
+            <a href="{% url 'contact' %}" class="footer-link"><i class="fas fa-chevron-right"></i>Contact Us</a>
+            <a href="#" class="footer-link"><i class="fas fa-chevron-right"></i>About Us</a>
+            <a href="#" class="footer-link"><i class="fas fa-chevron-right"></i>FAQ</a>
+            <a href="#" class="footer-link"><i class="fas fa-chevron-right"></i>Privacy Policy</a>
+            <a href="#" class="footer-link"><i class="fas fa-chevron-right"></i>Terms &amp; Conditions</a>
+          </div>
         </div>
 
         <!-- Contact -->
-        <div class="col-lg-3 col-md-6">
+        <div class="col-lg-3 col-md-6 col-12">
           <div class="footer-col-title">Contact Info</div>
           <div class="footer-contact-item">
             <div class="fci-icon"><i class="fas fa-map-marker-alt"></i></div>
@@ -665,7 +881,7 @@
         </div>
 
         <!-- Hours + App -->
-        <div class="col-lg-3 col-md-6">
+        <div class="col-lg-3 col-md-6 col-12">
           <div class="footer-col-title">Working Hours</div>
           <div class="footer-contact-item">
             <div class="fci-icon"><i class="fas fa-calendar-check"></i></div>
@@ -711,7 +927,7 @@
         <a href="{% url 'all_services' %}?category=mattress-cleaning"><i class="fas fa-bed"></i>Mattress Cleaning</a>
         <a href="#"><i class="fas fa-scroll"></i>Carpet Cleaning</a>
         <a href="#"><i class="fas fa-tint"></i>Water Tank Cleaning</a>
-        <a href="#"><i class="fas fa-snowflake"></i>AC Service & Repair</a>
+        <a href="#"><i class="fas fa-snowflake"></i>AC Service &amp; Repair</a>
         <a href="#"><i class="fas fa-fire"></i>Chimney Cleaning</a>
         <a href="#"><i class="fas fa-temperature-low"></i>Refrigerator Cleaning</a>
         <a href="#"><i class="fas fa-window-maximize"></i>Glass Cleaning</a>
@@ -734,7 +950,7 @@
       </div>
       <div class="footer-bottom-links">
         <a href="#">Privacy Policy</a>
-        <a href="#">Terms & Conditions</a>
+        <a href="#">Terms &amp; Conditions</a>
         <a href="#">Sitemap</a>
       </div>
     </div>
